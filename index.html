@@ -1,0 +1,2098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Language Plumber Pro</title>
+  <style>
+    :root {
+      --bg-dark: #0a0e14;
+      --panel-bg: #121a24;
+      --copper: #c27838;
+      --copper-bright: #f59e0b;
+      --brass: #fbbf24;
+      --iron: #334155;
+      --iron-dark: #1e293b;
+      --water-blue: #0284c7;
+      --water-glow: #38bdf8;
+      --leak-red: #ef4444;
+      --text-main: #f8fafc;
+      --text-dim: #94a3b8;
+      /* ★ 方格擴大至 76px，大幅提升單字容納空間 */
+      --cell-size: 76px;
+      --cell-gap: 6px;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* 容器隨擴大後的網格適度調整寬高，確保仍一屏無上下捲軸 */
+    #app-container {
+      width: 1120px;
+      max-width: 98vw;
+      height: min(770px, 97vh);
+      background: radial-gradient(circle at center, #162230 0%, #070a0e 100%);
+      border: 4px solid var(--copper);
+      border-radius: 14px;
+      box-shadow: 0 0 45px rgba(0,0,0,0.9), inset 0 0 20px rgba(194, 120, 56, 0.25);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding: 10px 16px;
+      overflow: hidden;
+    }
+
+    .rivet {
+      position: absolute;
+      width: 9px;
+      height: 9px;
+      background: radial-gradient(circle at 30% 30%, #fef08a, #854d0e);
+      border-radius: 50%;
+      box-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+      z-index: 30;
+    }
+    .r-tl { top: 6px; left: 6px; }
+    .r-tr { top: 6px; right: 6px; }
+    .r-bl { bottom: 6px; left: 6px; }
+    .r-br { bottom: 6px; right: 6px; }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 14px 18px;
+    }
+    .hidden {
+      display: none !important;
+    }
+
+    /* =========================================================================
+       1. START SCREEN
+       ========================================================================= */
+    #start-screen {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      background: radial-gradient(circle at 50% 50%, #192535 0%, #06090d 100%);
+      overflow: hidden;
+    }
+
+    .bg-gear {
+      position: absolute;
+      fill: none;
+      stroke: rgba(194, 120, 56, 0.12);
+      stroke-width: 3;
+      transform-origin: center;
+      pointer-events: none;
+    }
+    .gear-1 {
+      top: -50px;
+      left: -50px;
+      width: 250px;
+      height: 250px;
+      animation: spinGear 26s linear infinite;
+    }
+    .gear-2 {
+      bottom: -60px;
+      right: -60px;
+      width: 280px;
+      height: 280px;
+      animation: spinGearRev 30s linear infinite;
+    }
+    @keyframes spinGear { 100% { transform: rotate(360deg); } }
+    @keyframes spinGearRev { 100% { transform: rotate(-360deg); } }
+
+    .start-pipe-deco {
+      position: absolute;
+      top: 0;
+      right: 22%;
+      width: 60px;
+      height: 110px;
+      pointer-events: none;
+    }
+    .water-drop {
+      position: absolute;
+      bottom: 6px;
+      left: 26px;
+      width: 8px;
+      height: 11px;
+      background: var(--water-glow);
+      border-radius: 50% 50% 40% 40%;
+      filter: drop-shadow(0 0 6px var(--water-blue));
+      animation: dripDrop 2.2s cubic-bezier(0.55, 0.085, 0.68, 0.53) infinite;
+    }
+    @keyframes dripDrop {
+      0% { transform: scale(0.6) translateY(0); opacity: 0; }
+      40% { transform: scale(1.1) translateY(10px); opacity: 1; }
+      85% { transform: scale(1) translateY(75px); opacity: 0.9; }
+      100% { transform: scale(1.8, 0.3) translateY(85px); opacity: 0; }
+    }
+
+    .start-center-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+      margin: auto;
+    }
+    .title-box h1 {
+      font-size: 3.2rem;
+      letter-spacing: 4px;
+      margin: 0;
+      background: linear-gradient(180deg, #fef08a 0%, #f59e0b 55%, #b45309 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 4px 16px rgba(0,0,0,0.7);
+      filter: drop-shadow(0 4px 8px rgba(194, 120, 56, 0.35));
+    }
+    .title-box p {
+      color: var(--copper-bright);
+      margin: 8px 0 24px;
+      font-weight: 600;
+      font-size: 1.05rem;
+      letter-spacing: 1.2px;
+    }
+
+    .menu-btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 280px;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .btn-copper {
+      background: linear-gradient(180deg, var(--copper-bright) 0%, var(--copper) 100%);
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: bold;
+      padding: 11px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 0 #7c3a07, 0 5px 10px rgba(0,0,0,0.5);
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    }
+    .btn-copper:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 #7c3a07, 0 8px 14px rgba(0,0,0,0.4);
+    }
+    .btn-copper:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #7c3a07;
+    }
+    .btn-sub {
+      background: var(--iron);
+      color: var(--text-main);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      border: 1px solid #475569;
+    }
+    .btn-sub:hover {
+      background: #475569;
+    }
+
+    /* 計時模式切換鈕樣式 */
+    .btn-timer-toggle {
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+    .btn-timer-toggle.zen-mode {
+      background: #065f46;
+      border-color: #34d399;
+      color: #a7f3d0;
+      box-shadow: 0 0 8px rgba(52, 211, 153, 0.4);
+    }
+
+    /* =========================================================================
+       2. GAME HUD & CLOZE TEST
+       ========================================================================= */
+    #game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(18, 25, 35, 0.92);
+      padding: 6px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--iron);
+      margin-bottom: 8px;
+      min-height: 52px;
+    }
+    .cloze-container {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .cloze-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .mission-type-tag {
+      font-size: 0.68rem;
+      background: #0284c7;
+      color: #fff;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+    .cloze-hint-text {
+      font-size: 0.82rem;
+      color: var(--copper-bright);
+      font-weight: 600;
+    }
+    .cloze-sentence-display {
+      font-size: 1.15rem;
+      font-weight: bold;
+      color: #f1f5f9;
+      letter-spacing: 0.5px;
+    }
+    .cloze-blank-slot {
+      display: inline-block;
+      padding: 0 10px;
+      margin: 0 3px;
+      background: rgba(245, 158, 11, 0.15);
+      border-bottom: 2px dashed var(--brass);
+      color: var(--brass);
+      font-weight: 800;
+      border-radius: 3px;
+      box-shadow: inset 0 0 5px rgba(245, 158, 11, 0.2);
+    }
+
+    .header-ctrl-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    #game-main-area {
+      flex: 1;
+      display: flex;
+      gap: 12px;
+      align-items: stretch;
+      min-height: 0;
+    }
+
+    .grid-stage {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #090d13;
+      border: 2px solid var(--iron-dark);
+      border-radius: 10px;
+      padding: 6px;
+      position: relative;
+    }
+    .stage-content-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 484px; /* 與放大後的 board-wrapper 完全等高 */
+    }
+
+    /* =========================================================================
+       3. 左側水壓表（ANALOG PRESSURE GAUGE）與管線 (高度適配 484px)
+       ========================================================================= */
+    .curved-timer-column {
+      width: 80px;
+      height: 484px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .analog-gauge-wrapper {
+      width: 76px;
+      height: 76px;
+      position: relative;
+      margin-bottom: -4px;
+      z-index: 10;
+    }
+    .gauge-svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 3px 6px rgba(0,0,0,0.8));
+    }
+    .gauge-needle {
+      transform-origin: 38px 38px;
+      transition: transform 0.2s cubic-bezier(0.1, 0.9, 0.2, 1);
+    }
+    .gauge-needle.critical {
+      animation: needleVibrate 0.1s infinite alternate;
+    }
+    @keyframes needleVibrate {
+      0% { filter: drop-shadow(0 0 2px red); }
+      100% { filter: drop-shadow(0 0 6px red); transform: rotate(calc(var(--angle, 0deg) + 2deg)); }
+    }
+    .gauge-digital-readout {
+      position: absolute;
+      bottom: 12px;
+      width: 100%;
+      text-align: center;
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: #f8fafc;
+      text-shadow: 0 1px 3px #000;
+    }
+
+    /* 3x3 幾何對齊母盤 (網格擴大至 404px，中線鎖定 Y=242px) */
+    .board-wrapper {
+      display: grid;
+      grid-template-columns: 60px 404px 60px;
+      grid-template-rows: 34px 404px 34px;
+      gap: 6px;
+      align-items: center;
+      justify-items: center;
+      height: 484px;
+    }
+    .io-top-slot {
+      grid-column: 2;
+      grid-row: 1;
+      width: 404px;
+      height: 34px;
+      display: grid;
+      grid-template-columns: repeat(5, var(--cell-size));
+      gap: var(--cell-gap);
+    }
+    .io-bottom-slot {
+      grid-column: 2;
+      grid-row: 3;
+      width: 404px;
+      height: 34px;
+      display: grid;
+      grid-template-columns: repeat(5, var(--cell-size));
+      gap: var(--cell-gap);
+    }
+    .io-left-slot {
+      grid-column: 1;
+      grid-row: 2;
+      width: 60px;
+      height: 404px;
+      display: grid;
+      grid-template-rows: repeat(5, var(--cell-size));
+      gap: var(--cell-gap);
+    }
+    .io-right-slot {
+      grid-column: 3;
+      grid-row: 2;
+      width: 60px;
+      height: 404px;
+      display: grid;
+      grid-template-rows: repeat(5, var(--cell-size));
+      gap: var(--cell-gap);
+    }
+
+    /* 放大至 404x404 的 5x5 水管網格 */
+    #grid {
+      grid-column: 2;
+      grid-row: 2;
+      width: 404px;
+      height: 404px;
+      display: grid;
+      grid-template-columns: repeat(5, var(--cell-size));
+      grid-template-rows: repeat(5, var(--cell-size));
+      gap: var(--cell-gap);
+      background: #182331;
+      border-radius: 8px;
+      box-shadow: inset 0 0 12px rgba(0,0,0,0.85);
+    }
+
+    .grid-cell {
+      width: var(--cell-size);
+      height: var(--cell-size);
+      background: #0c1219;
+      border: 2px dashed #283547;
+      border-radius: 6px;
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .grid-cell:hover {
+      background: #141d29;
+      border-color: #475569;
+    }
+
+    .io-port-cell {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .realistic-faucet-box {
+      width: 60px;
+      height: 60px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .faucet-svg-icon {
+      width: 60px;
+      height: 60px;
+      filter: drop-shadow(0 3px 5px rgba(0,0,0,0.8));
+      transition: transform 0.2s ease;
+    }
+    .realistic-faucet-box:hover .faucet-svg-icon { transform: scale(1.05); }
+    .valve-rotating-realistic {
+      animation: wheelTurn 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    @keyframes wheelTurn {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(270deg); }
+    }
+
+    .output-tank {
+      background: #1e293b;
+      border: 2px solid var(--brass);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: bold;
+      color: #fef08a;
+      box-shadow: 0 0 8px rgba(224, 169, 70, 0.4);
+      position: relative;
+    }
+    .output-tank.top {
+      width: 68px;
+      height: 30px;
+      margin-bottom: -2px;
+    }
+    .output-tank.top::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      width: 18px;
+      height: 5px;
+      background: var(--copper);
+      border: 1px solid #451a03;
+      border-top: none;
+    }
+
+    .output-tank.bottom {
+      width: 68px;
+      height: 30px;
+      margin-top: -2px;
+    }
+    .output-tank.bottom::before {
+      content: '';
+      position: absolute;
+      top: -5px;
+      width: 18px;
+      height: 5px;
+      background: var(--copper);
+      border: 1px solid #451a03;
+      border-bottom: none;
+    }
+
+    .output-tank.right {
+      width: 54px;
+      height: 64px;
+      margin-left: -2px;
+    }
+    .output-tank.right::before {
+      content: '';
+      position: absolute;
+      left: -5px;
+      width: 5px;
+      height: 18px;
+      background: var(--copper);
+      border: 1px solid #451a03;
+      border-right: none;
+    }
+
+    .pipe-piece {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .pipe-svg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+
+    /* =========================================================================
+       4. 醒目水管庫存區（加闊以完全展現單字）
+       ========================================================================= */
+    .inventory-panel {
+      width: 250px;
+      background: linear-gradient(180deg, #182230 0%, #0d151f 100%);
+      border: 2px solid var(--copper);
+      border-radius: 10px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+      min-height: 0;
+    }
+    .inventory-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      border-bottom: 1px solid rgba(245, 158, 11, 0.2);
+      padding-bottom: 4px;
+    }
+    .inventory-header h3 {
+      margin: 0;
+      font-size: 0.95rem;
+      color: var(--brass);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+    .inventory-slots {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-auto-rows: 86px;
+      gap: 8px;
+      overflow-y: auto;
+      padding: 2px;
+    }
+    .inv-item {
+      background: radial-gradient(circle at center, #1a2738 0%, #0c131d 100%);
+      border: 2px solid #5a718c;
+      border-radius: 8px;
+      cursor: grab;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.16s ease;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.7);
+    }
+    .inv-item:hover {
+      border-color: var(--brass);
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+    }
+    .inv-item.selected {
+      border-color: var(--brass);
+      background: radial-gradient(circle, #253b54 0%, #111d2b 100%);
+      box-shadow: 0 0 14px rgba(251, 191, 36, 0.8), inset 0 0 8px rgba(251, 191, 36, 0.4);
+      animation: selectPulse 1.2s infinite alternate;
+    }
+    @keyframes selectPulse {
+      0% { transform: scale(1.01); }
+      100% { transform: scale(1.04); }
+    }
+
+    /* ★ 燙金浮雕單字標籤：無裁剪、全展開 */
+    .word-badge {
+      position: relative;
+      z-index: 2;
+      background: linear-gradient(180deg, #1e293b 0%, #090d14 100%);
+      border: 1.5px solid var(--brass);
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-size: 0.84rem;
+      font-weight: 800;
+      color: #ffffff;
+      max-width: 96%;
+      white-space: nowrap;
+      overflow: visible;
+      pointer-events: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.9), 0 0 6px rgba(251, 191, 36, 0.35);
+      letter-spacing: 0.2px;
+      text-align: center;
+    }
+    /* 超長單字（>7 字母）自適應緊湊排版 */
+    .word-badge.long-text {
+      font-size: 0.76rem;
+      letter-spacing: -0.3px;
+      padding: 2px 4px;
+    }
+
+    .burst-leak {
+      animation: pipeBurst 0.4s infinite alternate;
+      border-color: var(--leak-red) !important;
+    }
+    @keyframes pipeBurst {
+      0% { transform: scale(1); filter: drop-shadow(0 0 6px red); }
+      100% { transform: scale(1.08); filter: drop-shadow(0 0 16px red); }
+    }
+
+    /* =========================================================================
+       5. MODALS
+       ========================================================================= */
+    .modal-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(5px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+    .modal-box-large {
+      width: 760px;
+      max-width: 95%;
+      height: min(600px, 88vh);
+      background: var(--panel-bg);
+      border: 3px solid var(--copper);
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.9);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .modal-tabs {
+      display: flex;
+      background: #0d131a;
+      border-bottom: 2px solid var(--iron);
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      background: transparent;
+      color: var(--text-dim);
+      font-weight: bold;
+      font-size: 0.9rem;
+      border-bottom: 3px solid transparent;
+    }
+    .tab-btn.active {
+      color: var(--brass);
+      border-bottom-color: var(--brass);
+      background: rgba(224, 169, 70, 0.08);
+    }
+    .modal-content-area {
+      flex: 1;
+      padding: 14px;
+      overflow-y: auto;
+    }
+
+    .bank-item-row {
+      background: #0f1622;
+      border: 1px solid var(--iron);
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .bank-item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex: 1;
+      margin-right: 10px;
+    }
+    .bank-item-sentence {
+      font-weight: bold;
+      color: var(--brass);
+      font-size: 0.92rem;
+    }
+    .bank-item-meta {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+
+    .form-group { margin-bottom: 10px; }
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: bold;
+      color: var(--copper-bright);
+      margin-bottom: 3px;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      background: #0d131b;
+      border: 1px solid var(--iron);
+      border-radius: 6px;
+      color: #fff;
+      padding: 7px 10px;
+      font-size: 0.88rem;
+    }
+    .word-preview-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 5px;
+      min-height: 26px;
+      padding: 5px;
+      background: #0a0d13;
+      border-radius: 5px;
+    }
+    .word-tag {
+      background: #0369a1;
+      color: #fff;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: bold;
+    }
+
+    .pause-modal-box {
+      width: 340px;
+      background: var(--panel-bg);
+      border: 3px solid var(--copper);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.85);
+    }
+    .pause-modal-box h2 {
+      margin: 0;
+      color: var(--brass);
+      letter-spacing: 2px;
+      font-size: 1.4rem;
+    }
+
+    .result-status {
+      font-size: 1.45rem;
+      font-weight: bold;
+      text-align: center;
+    }
+    .result-detail {
+      font-size: 0.92rem;
+      color: var(--text-dim);
+      text-align: center;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="app-container">
+    <div class="rivet r-tl"></div>
+    <div class="rivet r-tr"></div>
+    <div class="rivet r-bl"></div>
+    <div class="rivet r-br"></div>
+
+    <!-- 1. 開始畫面 -->
+    <div id="start-screen" class="screen">
+      <svg class="bg-gear gear-1" viewBox="0 0 100 100">
+        <path d="M50 35 A15 15 0 1 0 50 65 A15 15 0 1 0 50 35 M46 15 L54 15 L56 22 L64 25 L70 20 L76 26 L72 33 L76 40 L84 41 L84 49 L77 52 L76 60 L82 66 L76 72 L69 68 L62 72 L61 80 L53 80 L50 73 L42 72 L37 78 L31 72 L35 65 L30 58 L22 57 L22 49 L29 46 L30 38 L24 32 L30 26 L37 30 L44 26 Z"/>
+      </svg>
+      <svg class="bg-gear gear-2" viewBox="0 0 100 100">
+        <path d="M50 35 A15 15 0 1 0 50 65 A15 15 0 1 0 50 35 M46 15 L54 15 L56 22 L64 25 L70 20 L76 26 L72 33 L76 40 L84 41 L84 49 L77 52 L76 60 L82 66 L76 72 L69 68 L62 72 L61 80 L53 80 L50 73 L42 72 L37 78 L31 72 L35 65 L30 58 L22 57 L22 49 L29 46 L30 38 L24 32 L30 26 L37 30 L44 26 Z"/>
+      </svg>
+
+      <div class="start-pipe-deco">
+        <svg viewBox="0 0 60 100" style="width:100%; height:100%;">
+          <path d="M 30 0 L 30 60" stroke="#c27838" stroke-width="12" fill="none"/>
+          <path d="M 20 60 L 40 60" stroke="#f59e0b" stroke-width="7" stroke-linecap="round"/>
+        </svg>
+        <div class="water-drop"></div>
+      </div>
+
+      <div class="start-center-card">
+        <div class="title-box">
+          <h1>LANGUAGE PLUMBER</h1>
+          <p>STEAM, PIPES &amp; GRAMMATICAL CURRENTS</p>
+        </div>
+
+        <div class="menu-btn-group">
+          <button class="btn-copper" id="btn-play">START GAME</button>
+          <button class="btn-sub" id="btn-open-bank">CUSTOM LEVEL BUILDER</button>
+          <button class="btn-sub" id="btn-open-credits">CREDITS</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. 遊戲主畫面（大方格 + 計時模式開關） -->
+    <div id="game-screen" class="screen hidden">
+      <div id="game-header">
+        <div class="cloze-container">
+          <div class="cloze-meta">
+            <span class="mission-type-tag" id="mission-tag">CLOZE TEST</span>
+            <span class="cloze-hint-text" id="target-sentence-hint">Hint</span>
+          </div>
+          <div class="cloze-sentence-display" id="cloze-sentence-display">
+            Loading cloze exercise...
+          </div>
+        </div>
+
+        <div class="header-ctrl-group">
+          <!-- ★ 計時模式開關鈕 -->
+          <button class="btn-sub btn-timer-toggle" id="btn-toggle-timer" title="Toggle countdown pressure vs relaxed zen mode">
+            ⏱️ TIMER: ON
+          </button>
+          <button class="btn-sub" id="btn-pause" style="padding: 5px 12px; font-size: 0.82rem;">⏸️ PAUSE</button>
+          <button class="btn-sub" id="btn-back-menu" style="padding: 5px 10px; font-size: 0.82rem;">MENU</button>
+        </div>
+      </div>
+
+      <div id="game-main-area">
+        <div class="grid-stage">
+          <div class="stage-content-row">
+            <!-- 左側水壓表（高度調整適配 484px 舞台，中線維持精確對齊） -->
+            <div class="curved-timer-column">
+              <div class="analog-gauge-wrapper">
+                <svg class="gauge-svg" viewBox="0 0 76 76">
+                  <defs>
+                    <radialGradient id="gaugeMetalBezel" cx="40%" cy="40%" r="60%">
+                      <stop offset="0%" stop-color="#fde047"/>
+                      <stop offset="50%" stop-color="#d97706"/>
+                      <stop offset="100%" stop-color="#451a03"/>
+                    </radialGradient>
+                    <radialGradient id="gaugeFace" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" stop-color="#1e293b"/>
+                      <stop offset="100%" stop-color="#090d14"/>
+                    </radialGradient>
+                  </defs>
+
+                  <circle cx="38" cy="38" r="37" fill="url(#gaugeMetalBezel)" stroke="#261005" stroke-width="1.5"/>
+                  <circle cx="38" cy="38" r="32" fill="url(#gaugeFace)" stroke="#1e293b" stroke-width="1.5"/>
+                  <circle cx="38" cy="8" r="1.5" fill="#fef08a"/>
+                  <circle cx="68" cy="38" r="1.5" fill="#fef08a"/>
+                  <circle cx="38" cy="68" r="1.5" fill="#fef08a"/>
+                  <circle cx="8" cy="38" r="1.5" fill="#fef08a"/>
+
+                  <path d="M 18 50 A 24 24 0 0 1 38 14" fill="none" stroke="#22c55e" stroke-width="3" stroke-linecap="round"/>
+                  <path d="M 38 14 A 24 24 0 0 1 54 26" fill="none" stroke="#eab308" stroke-width="3"/>
+                  <path d="M 54 26 A 24 24 0 0 1 58 50" fill="none" stroke="#ef4444" stroke-width="3.5" stroke-linecap="round"/>
+
+                  <text x="38" y="27" font-size="6" fill="#94a3b8" text-anchor="middle" font-weight="bold" letter-spacing="0.5">PRESSURE</text>
+
+                  <g class="gauge-needle" id="gauge-needle" style="transform: rotate(-120deg);">
+                    <polygon points="36,38 40,38 38.5,15 37.5,15" fill="#ef4444"/>
+                    <circle cx="38" cy="38" r="4.5" fill="#f59e0b" stroke="#78350f" stroke-width="1"/>
+                    <circle cx="38" cy="38" r="1.5" fill="#fef08a"/>
+                  </g>
+                </svg>
+                <div class="gauge-digital-readout" id="timer-text">60s</div>
+              </div>
+
+              <!-- 蓄壓管線：總高 408，中線轉折 Y=166，加上上方 76px 儀表，總 Y=242 完美直入水龍頭 -->
+              <svg viewBox="0 0 76 408" style="width:100%; height:408px;">
+                <defs>
+                  <linearGradient id="pipeMetalGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#334155"/>
+                    <stop offset="45%" stop-color="#64748b"/>
+                    <stop offset="100%" stop-color="#1e293b"/>
+                  </linearGradient>
+                  <linearGradient id="waterFlowGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+                    <stop offset="0%" stop-color="#0284c7"/>
+                    <stop offset="70%" stop-color="#38bdf8"/>
+                    <stop offset="100%" stop-color="#ef4444"/>
+                  </linearGradient>
+                </defs>
+
+                <rect x="12" y="365" width="52" height="36" rx="6" fill="url(#pipeMetalGrad)" stroke="#1e293b" stroke-width="2"/>
+                <line x1="20" y1="376" x2="56" y2="376" stroke="#1e293b" stroke-width="2"/>
+                <line x1="20" y1="388" x2="56" y2="388" stroke="#1e293b" stroke-width="2"/>
+
+                <path d="M 38 370 L 38 184 Q 38 166 56 166 L 76 166"
+                      fill="none" stroke="url(#pipeMetalGrad)" stroke-width="22" stroke-linecap="square"/>
+                <path d="M 38 370 L 38 184 Q 38 166 56 166 L 76 166"
+                      fill="none" stroke="#090d14" stroke-width="12" stroke-linecap="square"/>
+                <path id="supply-water-path"
+                      d="M 38 370 L 38 184 Q 38 166 56 166 L 76 166"
+                      fill="none" stroke="url(#waterFlowGrad)" stroke-width="9" stroke-linecap="square"
+                      style="stroke-dasharray: 240; stroke-dashoffset: 240; filter: drop-shadow(0 0 6px #38bdf8);"/>
+                <rect x="29" y="358" width="18" height="7" rx="2" fill="#d97706" stroke="#451a03"/>
+              </svg>
+            </div>
+
+            <!-- ★ 放大後的 3x3 幾何母盤（每格 76px） -->
+            <div class="board-wrapper">
+              <div class="io-top-slot" id="top-io-row"></div>
+              <div class="io-left-slot" id="left-io-col"></div>
+              <div id="grid"></div>
+              <div class="io-right-slot" id="right-io-col"></div>
+              <div class="io-bottom-slot" id="bottom-io-row"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 醒目庫存槽（增寬至 250px） -->
+        <div class="inventory-panel">
+          <div class="inventory-header">
+            <h3>PIPE INVENTORY</h3>
+            <button class="btn-sub" id="btn-reroll-all" style="padding: 2px 7px; font-size: 0.72rem;">REROLL</button>
+          </div>
+          <div class="inventory-slots" id="inventory-list"></div>
+          <div style="font-size: 0.68rem; color: var(--text-dim); margin-top: 6px; line-height: 1.35;">
+            💡 <b>Controls</b>:<br>
+            • <b>Timer Mode</b>: Toggle ON/OFF in header anytime.<br>
+            • <b>Rotate</b>: Left-click placed pipe to turn 90°.<br>
+            • <b>Recycle</b>: Right-click placed pipe to retrieve; right-click in inventory to scrap.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 暫停視窗 -->
+    <div id="modal-pause" class="modal-overlay hidden">
+      <div class="pause-modal-box">
+        <h2>GAME PAUSED</h2>
+        <p style="color: var(--text-dim); font-size: 0.85rem; margin: 0;">Water pressure halted. Plan your grammar route carefully!</p>
+        <button class="btn-copper" id="btn-resume">RESUME FLOW</button>
+        <button class="btn-sub" id="btn-pause-restart">RESTART LEVEL</button>
+        <button class="btn-sub" id="btn-pause-quit">QUIT TO MENU</button>
+      </div>
+    </div>
+
+    <!-- 題庫自製視窗 -->
+    <div id="modal-bank" class="modal-overlay hidden">
+      <div class="modal-box-large">
+        <div class="modal-tabs">
+          <button class="tab-btn active" id="tab-btn-list">📋 QUESTION LIST</button>
+          <button class="tab-btn" id="tab-btn-edit">➕ CREATE / EDIT</button>
+          <button class="tab-btn" id="tab-btn-json">💾 JSON BACKUP</button>
+        </div>
+
+        <div class="modal-content-area" id="tab-pane-list">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px; align-items: center;">
+            <span style="font-size: 0.85rem; color: var(--text-dim);"><b id="bank-count-text">0</b> Levels Ready</span>
+            <button class="btn-copper" id="btn-to-add-form" style="padding: 5px 12px; font-size: 0.8rem;">＋ NEW QUESTION</button>
+          </div>
+          <div id="bank-cards-container"></div>
+        </div>
+
+        <div class="modal-content-area hidden" id="tab-pane-edit">
+          <input type="hidden" id="edit-form-id">
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="form-group">
+              <label>Grammar Category</label>
+              <input type="text" id="form-category" placeholder="e.g. Past Continuous, Phrasal Verbs">
+            </div>
+            <div class="form-group">
+              <label>Time Limit (Seconds)</label>
+              <input type="number" id="form-timelimit" value="60" min="30" max="180">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Sentence Prompt / Meaning Hint</label>
+            <input type="text" id="form-hint" placeholder="e.g. Context: 他去年冬天戒菸了 (give up)">
+          </div>
+
+          <div class="form-group">
+            <label>Target Sentence (Use [brackets] around cloze blanks)</label>
+            <input type="text" id="form-sentence" placeholder="e.g. He [gave] [up] smoking last winter">
+            <div style="font-size: 0.72rem; color: var(--text-dim); margin-top: 3px;">
+              Live Word Tokens &amp; Cloze Blanks Preview:
+            </div>
+            <div class="word-preview-box" id="form-word-preview"></div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 10px;">
+            <div class="form-group">
+              <label>Distractor Words (Separated by commas/spaces)</label>
+              <input type="text" id="form-distractors" placeholder="e.g. was, play">
+            </div>
+            <div class="form-group">
+              <label>Outlet Direction</label>
+              <select id="form-exit-side">
+                <option value="auto">🤖 Auto-Recommend (Guaranteed Solvable)</option>
+                <option value="right">➡️ Right Side (Horizontal)</option>
+                <option value="top">⬆️ Top Side (Ascending)</option>
+                <option value="bottom">⬇️ Bottom Side (Descending)</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px;">
+            <button class="btn-sub" id="btn-cancel-edit">CANCEL</button>
+            <button class="btn-copper" id="btn-save-form-item">SAVE LEVEL</button>
+          </div>
+        </div>
+
+        <div class="modal-content-area hidden" id="tab-pane-json">
+          <p style="font-size: 0.8rem; color: var(--text-dim); margin-top: 0;">
+            Export or import full JSON question structures below:
+          </p>
+          <textarea id="bank-json-input" style="width: 100%; height: 320px; background: #0c1118; color: #f8fafc; border: 1px solid var(--iron); border-radius: 6px; padding: 8px; font-family: monospace; font-size: 0.85rem;"></textarea>
+          <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px;">
+            <button class="btn-sub" id="btn-reset-default-bank">RESTORE DEFAULT</button>
+            <button class="btn-copper" id="btn-save-json">APPLY JSON</button>
+          </div>
+        </div>
+
+        <div style="padding: 8px 14px; background: #0e141d; border-top: 1px solid var(--iron); display: flex; justify-content: flex-end;">
+          <button class="btn-sub" id="btn-close-bank">CLOSE</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 製作名單視窗 -->
+    <div id="modal-credits" class="modal-overlay hidden">
+      <!-- 加上 max-height 與 overflow-y: auto -->
+      <div class="modal-box-large" style="width: 480px; max-height: 80vh; overflow-y: auto; padding: 20px; text-align: center;">
+        <h2 style="color: var(--brass); margin-top: 0; font-size: 1.4rem;">CREDITS</h2>
+        <p style="color: var(--copper-bright); font-weight: bold; margin-bottom: 8px;">Language Plumber Pro</p>
+        <div style="font-size: 0.85rem; color: var(--text-dim); line-height: 1.7; text-align: left; margin: 12px 0;">
+          🛠️ <b>What is the purpose of your app? (which aspect of language learning it targets)</b>: By combining language learning with gameplay, this app helps learners study grammar (especially sentence structure and word order) and vocabulary at the same time without getting bored. Learners can also turn off the countdown timer and play without anxiety. Most importantly, language learning is built into the game itself, so learners don’t feel like they are taking a test. This avoids the “chocolate-covered broccoli” problem, where learning content is simply added on top of a game.<br>
+          🚰 <b>How long did you spend on it?</b>:I spent 2 hours and used 199,372 tokens.<br>
+          ⏱️ <b>What prompts did you give to make the app</b>: <br>As following:<br>
+<b>[Role] </b>You are a full-stack web developer and game designer.<br>
+
+<b>[Goal]</b> Using HTML, CSS, and JavaScript (all in a single file for easy testing), build a web app called “Language Learning Plumber.”<br>
+
+<b>[Feature Requirements]</b><br>
+Start screen: a Start button, Credits, and a custom question bank area.<br>
+Game screen: The inventory area provides different pipes depending on the question. Each pipe is labeled with a word, phrase, etc. The player takes pipes from the inventory area and places them in the answer area to build a connected pipeline. If the sentence formed by the connected pipes is grammatically correct, the player can open the faucet on the left side of the answer area, and the water flows through successfully. If the grammar is wrong, the water overflows.<br>
+Answer area: Depending on the question, the answer area is a grid of 5×5 or larger. Both the left and right sides of the answer area have connection ports.<br>
+Time limit: At the bottom of the screen, a pipe connects to the faucet in the upper left. Water slowly accumulates from the start of the level, representing the time limit. If the pipe fills up before the player opens the faucet, the player also loses the game.<br>
+
+<b>[Output Format]</b> Provide the complete code in a single HTML code block, including the styling and interaction logic.
+        </div>
+        <button class="btn-copper" id="btn-close-credits">BACK TO MENU</button>
+      </div>
+    </div>
+
+    <!-- 結果結算視窗 -->
+    <div id="modal-result" class="modal-overlay hidden">
+      <div class="modal-box-large" style="width: 480px; height: auto; padding: 20px; text-align: center;">
+        <div class="result-status" id="result-title">EVALUATION</div>
+        <div class="result-detail" id="result-desc">Status description</div>
+        <div style="display: flex; justify-content: center; gap: 10px; margin-top: 16px;">
+          <button class="btn-sub" id="btn-retry-level">RETRY</button>
+          <button class="btn-copper" id="btn-next-level">NEXT LEVEL</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================================
+       1. 題庫資料
+       ========================================================================= */
+    const DEFAULT_QUESTION_BANK = [
+      {
+        id: "q1",
+        category: "Habitual Tense",
+        hint: "Context: 她每天早晨喝咖啡",
+        rawSentence: "She [drinks] coffee [every] single morning",
+        distractors: ["drink", "coffees"],
+        exitSide: "bottom",
+        timeLimit: 60
+      },
+      {
+        id: "q2",
+        category: "Phrasal Verbs",
+        hint: "Context: 他去年冬天戒菸了 (give up)",
+        rawSentence: "He [gave] [up] smoking last winter",
+        distractors: ["give", "smoke"],
+        exitSide: "bottom",
+        timeLimit: 65
+      },
+      {
+        id: "q3",
+        category: "Present Perfect",
+        hint: "Context: 我們已經住在這裡十年了",
+        rawSentence: "We [have] lived here [for] ten years",
+        distractors: ["has", "living"],
+        exitSide: "top",
+        timeLimit: 75
+      },
+      {
+        id: "q4",
+        category: "Zero Conditional",
+        hint: "Context: 如果你加熱冰塊，它就會融化",
+        rawSentence: "If you [heat] ice it [melts]",
+        distractors: ["heated", "melt"],
+        exitSide: "bottom",
+        timeLimit: 65
+      },
+      {
+        id: "q5",
+        category: "Passive Voice",
+        hint: "Context: 這座古橋建於羅馬時代",
+        rawSentence: "The ancient bridge [was] [built] in Roman times",
+        distractors: ["is", "build"],
+        exitSide: "right",
+        timeLimit: 75
+      },
+      {
+        id: "q6",
+        category: "Relative Clause",
+        hint: "Context: 我遇見了一位會說流利法語的女孩",
+        rawSentence: "I met a girl [who] [speaks] fluent French",
+        distractors: ["whom", "speak"],
+        exitSide: "top",
+        timeLimit: 70
+      },
+      {
+        id: "q7",
+        category: "Business English",
+        hint: "Context: 我們期待能與您會面 (look forward to + V-ing)",
+        rawSentence: "We look forward [to] [meeting] with you",
+        distractors: ["meet", "looks"],
+        exitSide: "right",
+        timeLimit: 65
+      },
+      {
+        id: "q8",
+        category: "Future Intent",
+        hint: "Context: 她打算前往加拿大留學",
+        rawSentence: "She [is] [going] to study in Canada",
+        distractors: ["are", "studies"],
+        exitSide: "bottom",
+        timeLimit: 65
+      }
+    ];
+
+    let questionBank = JSON.parse(localStorage.getItem("plumber_bank_cloze_v7")) || DEFAULT_QUESTION_BANK;
+
+    function parseClozeData(rawSentence) {
+      const tokens = rawSentence.trim().split(/\s+/).filter(Boolean);
+      const correctWords = [];
+      const clozeParts = [];
+      let blankCount = 1;
+
+      tokens.forEach(token => {
+        if (token.startsWith('[') && token.endsWith(']')) {
+          const word = token.slice(1, -1);
+          correctWords.push(word);
+          clozeParts.push(`<span class="cloze-blank-slot">[ ${blankCount}. ? ]</span>`);
+          blankCount++;
+        } else {
+          correctWords.push(token);
+          clozeParts.push(token);
+        }
+      });
+
+      return {
+        correctWords,
+        clozeHtml: clozeParts.join(' ')
+      };
+    }
+
+    /* =========================================================================
+       2. 音效引擎
+       ========================================================================= */
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playSound(type) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const now = audioCtx.currentTime;
+
+      if (type === 'valve') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(145, now);
+        osc.frequency.exponentialRampToValueAtTime(45, now + 0.2);
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.2);
+      } else if (type === 'flow') {
+        const bufferSize = audioCtx.sampleRate * 0.25;
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = buffer;
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(450, now);
+        filter.Q.setValueAtTime(3.0, now);
+        const gain = audioCtx.createGain();
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioCtx.destination);
+        noise.start(now);
+      } else if (type === 'burst') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(105, now);
+        osc.frequency.linearRampToValueAtTime(25, now + 0.4);
+        gain.gain.setValueAtTime(0.45, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.4);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.4);
+      } else if (type === 'win') {
+        [261.63, 329.63, 392.00, 523.25].forEach((freq, idx) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0.18, now + idx * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.08 + 0.25);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now + idx * 0.08);
+          osc.stop(now + idx * 0.08 + 0.25);
+        });
+      }
+    }
+
+    /* =========================================================================
+       3. 放大版 76px 空心水管與真實水龍頭 SVG
+       ========================================================================= */
+    const PIPE_TYPES = {
+      straight: { name: 'straight', baseConnect: [false, true, false, true] },
+      corner: { name: 'corner', baseConnect: [true, true, false, false] }
+    };
+
+    function getRotatedOpenings(type, rotation) {
+      const base = PIPE_TYPES[type].baseConnect;
+      const shift = (rotation / 90) % 4;
+      const res = [false, false, false, false];
+      for (let i = 0; i < 4; i++) res[(i + shift) % 4] = base[i];
+      return { top: res[0], right: res[1], bottom: res[2], left: res[3] };
+    }
+
+    // 適配 76px 大方格尺寸的 SVG 渲染
+    function renderPipeSVG(type, rotation, isActive = false) {
+      let shell = '';
+      let water = '';
+
+      if (type === 'straight') {
+        shell = `
+          <!-- 放大外管身 (中心位於 Y=38) -->
+          <rect x="0" y="24" width="76" height="28" fill="#3b4b5e" stroke="#1e293b" stroke-width="2"/>
+          <rect x="0" y="21" width="6" height="34" fill="#f59e0b" stroke="#78350f" stroke-width="1"/>
+          <rect x="70" y="21" width="6" height="34" fill="#f59e0b" stroke="#78350f" stroke-width="1"/>
+          <rect x="0" y="29" width="76" height="18" fill="#06090e"/>
+        `;
+        if (isActive) {
+          water = `
+            <line x1="0" y1="38" x2="76" y2="38" stroke="#38bdf8" stroke-width="12" stroke-linecap="round"
+                  style="filter: drop-shadow(0 0 6px #0284c7);"/>
+          `;
+        }
+      } else if (type === 'corner') {
+        shell = `
+          <!-- 彎角外管身 (中心轉角 (38, 38)) -->
+          <path d="M 38 0 L 38 38 L 76 38" fill="none" stroke="#3b4b5e" stroke-width="28" stroke-linecap="square"/>
+          <rect x="24" y="0" width="28" height="6" fill="#f59e0b" stroke="#78350f" stroke-width="1"/>
+          <rect x="70" y="24" width="6" height="28" fill="#f59e0b" stroke="#78350f" stroke-width="1"/>
+          <path d="M 38 0 L 38 38 L 76 38" fill="none" stroke="#06090e" stroke-width="16" stroke-linecap="square"/>
+        `;
+        if (isActive) {
+          water = `
+            <path d="M 38 0 L 38 38 L 76 38" fill="none" stroke="#38bdf8" stroke-width="12" stroke-linecap="round"
+                  style="filter: drop-shadow(0 0 6px #0284c7);"/>
+          `;
+        }
+      }
+
+      return `
+        <svg class="pipe-svg" viewBox="0 0 76 76" style="transform: rotate(${rotation}deg);">
+          ${shell}
+          ${water}
+        </svg>
+      `;
+    }
+
+    function getRealisticFaucetSVG() {
+      return `
+        <svg class="faucet-svg-icon" viewBox="0 0 76 76">
+          <defs>
+            <linearGradient id="brassGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#fef08a"/>
+              <stop offset="35%" stop-color="#d97706"/>
+              <stop offset="70%" stop-color="#92400e"/>
+              <stop offset="100%" stop-color="#451a03"/>
+            </linearGradient>
+            <linearGradient id="redValve" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#f87171"/>
+              <stop offset="50%" stop-color="#dc2626"/>
+              <stop offset="100%" stop-color="#7f1d1d"/>
+            </linearGradient>
+          </defs>
+
+          <rect x="2" y="21" width="9" height="34" rx="2" fill="url(#brassGrad)" stroke="#451a03" stroke-width="1.5"/>
+          <circle cx="6.5" cy="26" r="1.8" fill="#78350f"/>
+          <circle cx="6.5" cy="50" r="1.8" fill="#78350f"/>
+
+          <path d="M 11 28 L 42 28 Q 52 28 52 38 L 52 48 L 68 48 L 68 34 Q 68 22 42 22 L 11 22 Z" 
+                fill="url(#brassGrad)" stroke="#451a03" stroke-width="1.5"/>
+          <rect x="66" y="30" width="8" height="20" rx="2" fill="#d97706" stroke="#451a03" stroke-width="1"/>
+          <rect x="25" y="14" width="14" height="10" fill="url(#brassGrad)" stroke="#451a03" stroke-width="1"/>
+
+          <g id="faucet-handle-group" style="transform-origin: 32px 11px;">
+            <circle cx="32" cy="11" r="13" fill="url(#redValve)" stroke="#450a0a" stroke-width="2"/>
+            <circle cx="32" cy="11" r="6.5" fill="#1e293b" stroke="#7f1d1d" stroke-width="1.3"/>
+            <line x1="32" y1="0" x2="32" y2="22" stroke="#fecaca" stroke-width="2"/>
+            <line x1="21" y1="11" x2="43" y2="11" stroke="#fecaca" stroke-width="2"/>
+            <circle cx="32" cy="11" r="2.8" fill="#fef08a"/>
+          </g>
+        </svg>
+      `;
+    }
+
+    /* =========================================================================
+       4. 拓撲與狀態控制（支援計時開關）
+       ========================================================================= */
+    const GRID_SIZE = 5;
+    const INVENTORY_CAPACITY = 6;
+    const TOTAL_PIPE_STROKE = 240;
+
+    let entryRow = 2;
+    let currentExit = { side: 'bottom', index: 3 };
+
+    let currentLevelIdx = 0;
+    let gridData = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(null));
+    let inventoryData = [];
+    let selectedInvId = null;
+
+    let activeCorrectWords = [];
+    let timeRemaining = 0;
+    let maxTimeLimit = 60;
+    let timerInterval = null;
+    let isFlowing = false;
+    let isPaused = false;
+
+    // ★ 計時模式開關變數 (預設開啟)
+    let isTimerEnabled = true;
+
+    function resolveExitConfig(correctWords, exitSideReq) {
+      const isOdd = (correctWords.length % 2 === 1);
+      const sideReq = exitSideReq || 'auto';
+
+      if (sideReq === 'right') return { side: 'right', index: isOdd ? 2 : 3 };
+      if (sideReq === 'top') return { side: 'top', index: isOdd ? 4 : 3 };
+      if (sideReq === 'bottom') return { side: 'bottom', index: isOdd ? 2 : 3 };
+      return isOdd ? { side: 'right', index: 2 } : { side: 'bottom', index: 3 };
+    }
+
+    function createPipeItem() {
+      const level = questionBank[currentLevelIdx];
+      const parsed = parseClozeData(level.rawSentence);
+      const allWords = parsed.correctWords;
+
+      const placedWords = [];
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          if (gridData[r][c]) placedWords.push(gridData[r][c].word);
+        }
+      }
+      const missingWords = allWords.filter(w => !placedWords.includes(w));
+      let chosenWord = "";
+
+      if (missingWords.length > 0 && Math.random() < 0.75) {
+        chosenWord = missingWords[Math.floor(Math.random() * missingWords.length)];
+      } else {
+        const pool = [...allWords, ...(level.distractors || [])];
+        chosenWord = pool[Math.floor(Math.random() * pool.length)];
+      }
+
+      return {
+        id: 'p_' + Math.random().toString(36).substring(2, 9),
+        word: chosenWord,
+        type: Math.random() < 0.5 ? 'straight' : 'corner',
+        rotation: [0, 90, 180, 270][Math.floor(Math.random() * 4)],
+        isWaterFilled: false
+      };
+    }
+
+    /* =========================================================================
+       5. 關卡初始化與畫面配置
+       ========================================================================= */
+    function startLevel(idx) {
+      currentLevelIdx = idx % questionBank.length;
+      const level = questionBank[currentLevelIdx];
+
+      const parsed = parseClozeData(level.rawSentence);
+      activeCorrectWords = parsed.correctWords;
+
+      entryRow = 2;
+      currentExit = resolveExitConfig(activeCorrectWords, level.exitSide);
+
+      gridData = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(null));
+      selectedInvId = null;
+      isFlowing = false;
+      isPaused = false;
+
+      inventoryData = [];
+      for (let i = 0; i < INVENTORY_CAPACITY; i++) {
+        inventoryData.push(createPipeItem());
+      }
+
+      document.getElementById('mission-tag').textContent = level.category || 'CLOZE TEST';
+      document.getElementById('target-sentence-hint').textContent = level.hint || '';
+      document.getElementById('cloze-sentence-display').innerHTML = parsed.clozeHtml;
+
+      maxTimeLimit = level.timeLimit || 60;
+      timeRemaining = maxTimeLimit;
+      clearInterval(timerInterval);
+      startPressureTimer();
+
+      renderAllStages();
+      renderInventory();
+    }
+
+    function renderAllStages() {
+      // 1. 頂部出水排
+      const topRow = document.getElementById('top-io-row');
+      topRow.innerHTML = '';
+      for (let c = 0; c < GRID_SIZE; c++) {
+        const slot = document.createElement('div');
+        slot.className = 'io-port-cell';
+        if (currentExit.side === 'top' && currentExit.index === c) {
+          slot.innerHTML = `<div class="output-tank top">▲ OUT</div>`;
+        }
+        topRow.appendChild(slot);
+      }
+
+      // 2. 底部出水排
+      const btmRow = document.getElementById('bottom-io-row');
+      btmRow.innerHTML = '';
+      for (let c = 0; c < GRID_SIZE; c++) {
+        const slot = document.createElement('div');
+        slot.className = 'io-port-cell';
+        if (currentExit.side === 'bottom' && currentExit.index === c) {
+          slot.innerHTML = `<div class="output-tank bottom">▼ OUT</div>`;
+        }
+        btmRow.appendChild(slot);
+      }
+
+      // 3. 左側水龍頭排
+      const leftCol = document.getElementById('left-io-col');
+      leftCol.innerHTML = '';
+      for (let r = 0; r < GRID_SIZE; r++) {
+        const slot = document.createElement('div');
+        slot.className = 'io-port-cell';
+        if (r === entryRow) {
+          slot.innerHTML = `
+            <div class="realistic-faucet-box" id="faucet-clicker" title="Click valve to test flow!">
+              ${getRealisticFaucetSVG()}
+            </div>
+          `;
+        }
+        leftCol.appendChild(slot);
+      }
+
+      // 4. 右側出水排
+      const rightCol = document.getElementById('right-io-col');
+      rightCol.innerHTML = '';
+      for (let r = 0; r < GRID_SIZE; r++) {
+        const slot = document.createElement('div');
+        slot.className = 'io-port-cell';
+        if (currentExit.side === 'right' && currentExit.index === r) {
+          slot.innerHTML = `<div class="output-tank right">OUT ▶</div>`;
+        }
+        rightCol.appendChild(slot);
+      }
+
+      const faucetBtn = document.getElementById('faucet-clicker');
+      if (faucetBtn) faucetBtn.addEventListener('click', turnFaucet);
+
+      renderGrid();
+    }
+
+    // 水壓計時器（依據 isTimerEnabled 決定是否倒數）
+    function startPressureTimer() {
+      const waterPath = document.getElementById('supply-water-path');
+      const timerText = document.getElementById('timer-text');
+      const needle = document.getElementById('gauge-needle');
+
+      // 若計時模式關閉（禪意模式）
+      if (!isTimerEnabled) {
+        if (needle) {
+          needle.style.transform = `rotate(-120deg)`;
+          needle.classList.remove('critical');
+        }
+        if (waterPath) waterPath.style.strokeDashoffset = TOTAL_PIPE_STROKE;
+        if (timerText) timerText.textContent = "ZEN";
+        return;
+      }
+
+      timerInterval = setInterval(() => {
+        if (isFlowing || isPaused || !isTimerEnabled) return;
+
+        timeRemaining -= 0.1;
+        const progress = Math.min(100, Math.max(0, ((maxTimeLimit - timeRemaining) / maxTimeLimit) * 100));
+
+        const angle = -120 + (progress / 100) * 240;
+        if (needle) {
+          needle.style.transform = `rotate(${angle}deg)`;
+          needle.style.setProperty('--angle', `${angle}deg`);
+          if (progress > 85) needle.classList.add('critical');
+          else needle.classList.remove('critical');
+        }
+
+        const offset = TOTAL_PIPE_STROKE - (progress / 100) * TOTAL_PIPE_STROKE;
+        if (waterPath) waterPath.style.strokeDashoffset = offset;
+        if (timerText) timerText.textContent = Math.ceil(Math.max(0, timeRemaining)) + 's';
+
+        if (timeRemaining <= 0) {
+          clearInterval(timerInterval);
+          playSound('burst');
+          showResultModal(false, "Pressure gauge blew past redline (MAX PSI)!\nThe boiler ruptured. Connect the pipeline before pressure overloads.");
+        }
+      }, 100);
+    }
+
+    /* =========================================================================
+       6. 網格與醒目庫存互動（完全展示單字）
+       ========================================================================= */
+    function renderGrid() {
+      const gridEl = document.getElementById('grid');
+      gridEl.innerHTML = '';
+
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          const cell = document.createElement('div');
+          cell.className = 'grid-cell';
+          cell.dataset.row = r;
+          cell.dataset.col = c;
+
+          const item = gridData[r][c];
+          if (item) {
+            const piece = document.createElement('div');
+            piece.className = 'pipe-piece';
+            const isLong = item.word.length > 7 ? 'long-text' : '';
+            piece.innerHTML = `
+              ${renderPipeSVG(item.type, item.rotation, item.isWaterFilled)}
+              <div class="word-badge ${isLong}">${item.word}</div>
+            `;
+            cell.appendChild(piece);
+          }
+
+          cell.addEventListener('click', () => handleCellClick(r, c));
+          cell.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            handleCellRightClick(r, c);
+          });
+
+          gridEl.appendChild(cell);
+        }
+      }
+    }
+
+    function renderInventory() {
+      const invList = document.getElementById('inventory-list');
+      invList.innerHTML = '';
+
+      inventoryData.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = `inv-item ${selectedInvId === item.id ? 'selected' : ''}`;
+        const isLong = item.word.length > 7 ? 'long-text' : '';
+        div.innerHTML = `
+          ${renderPipeSVG(item.type, item.rotation, false)}
+          <div class="word-badge ${isLong}">${item.word}</div>
+        `;
+
+        div.addEventListener('click', () => {
+          if (isPaused || isFlowing) return;
+          selectedInvId = (selectedInvId === item.id) ? null : item.id;
+          renderInventory();
+        });
+
+        div.addEventListener('contextmenu', (e) => {
+          e.preventDefault();
+          if (isPaused || isFlowing) return;
+          inventoryData[index] = createPipeItem();
+          if (selectedInvId === item.id) selectedInvId = null;
+          playSound('valve');
+          renderInventory();
+        });
+
+        invList.appendChild(div);
+      });
+    }
+
+    function handleCellClick(r, c) {
+      if (isFlowing || isPaused) return;
+
+      if (gridData[r][c]) {
+        gridData[r][c].rotation = (gridData[r][c].rotation + 90) % 360;
+        playSound('valve');
+        renderGrid();
+      } else if (selectedInvId) {
+        const invIdx = inventoryData.findIndex(i => i.id === selectedInvId);
+        if (invIdx !== -1) {
+          gridData[r][c] = inventoryData[invIdx];
+          inventoryData[invIdx] = createPipeItem();
+          selectedInvId = null;
+          playSound('flow');
+          renderGrid();
+          renderInventory();
+        }
+      }
+    }
+
+    function handleCellRightClick(r, c) {
+      if (isFlowing || isPaused) return;
+      if (gridData[r][c]) {
+        const item = gridData[r][c];
+        gridData[r][c] = null;
+        inventoryData.pop();
+        inventoryData.unshift(item);
+        playSound('valve');
+        renderGrid();
+        renderInventory();
+      }
+    }
+
+    document.getElementById('btn-reroll-all').addEventListener('click', () => {
+      if (isFlowing || isPaused) return;
+      inventoryData = [];
+      for (let i = 0; i < INVENTORY_CAPACITY; i++) inventoryData.push(createPipeItem());
+      selectedInvId = null;
+      playSound('valve');
+      renderInventory();
+    });
+
+    /* =========================================================================
+       7. 閥門通水與流動驗證
+       ========================================================================= */
+    function turnFaucet() {
+      if (isFlowing || isPaused) return;
+      isFlowing = true;
+
+      const wheel = document.getElementById('faucet-handle-group');
+      if (wheel) wheel.classList.add('valve-rotating-realistic');
+      playSound('valve');
+
+      setTimeout(() => {
+        if (wheel) wheel.classList.remove('valve-rotating-realistic');
+        testWaterFlow();
+      }, 420);
+    }
+
+    async function testWaterFlow() {
+      playSound('flow');
+
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          if (gridData[r][c]) gridData[r][c].isWaterFilled = false;
+        }
+      }
+
+      let currR = entryRow;
+      let currC = 0;
+      let enterFrom = 'left';
+      const wordsCollected = [];
+      let flowSuccess = false;
+      let burstPoint = null;
+
+      while (currR >= 0 && currR < GRID_SIZE && currC >= 0 && currC < GRID_SIZE) {
+        const pipe = gridData[currR][currC];
+        if (!pipe) {
+          burstPoint = { r: currR, c: currC, reason: 'Disconnected empty slot' };
+          break;
+        }
+
+        const openings = getRotatedOpenings(pipe.type, pipe.rotation);
+        if (!openings[enterFrom]) {
+          burstPoint = { r: currR, c: currC, reason: 'Misaligned entry port' };
+          break;
+        }
+
+        pipe.isWaterFilled = true;
+        wordsCollected.push(pipe.word);
+        renderGrid();
+        playSound('flow');
+
+        await new Promise(res => setTimeout(res, 220));
+
+        let exitTo = null;
+        for (let dir of ['top', 'right', 'bottom', 'left']) {
+          if (dir !== enterFrom && openings[dir]) {
+            exitTo = dir;
+            break;
+          }
+        }
+
+        if (!exitTo) {
+          burstPoint = { r: currR, c: currC, reason: 'Dead-end terminal pipe' };
+          break;
+        }
+
+        if (currentExit.side === 'right' && currC === GRID_SIZE - 1 && exitTo === 'right' && currR === currentExit.index) {
+          flowSuccess = true; break;
+        } else if (currentExit.side === 'top' && currR === 0 && exitTo === 'top' && currC === currentExit.index) {
+          flowSuccess = true; break;
+        } else if (currentExit.side === 'bottom' && currR === GRID_SIZE - 1 && exitTo === 'bottom' && currC === currentExit.index) {
+          flowSuccess = true; break;
+        }
+
+        if (exitTo === 'top') { currR--; enterFrom = 'bottom'; }
+        else if (exitTo === 'bottom') { currR++; enterFrom = 'top'; }
+        else if (exitTo === 'left') { currC--; enterFrom = 'right'; }
+        else if (exitTo === 'right') { currC++; enterFrom = 'left'; }
+      }
+
+      const formedSentence = wordsCollected.join(" ");
+      const correctSentence = activeCorrectWords.join(" ");
+
+      if (flowSuccess) {
+        if (formedSentence === correctSentence) {
+          playSound('win');
+          clearInterval(timerInterval);
+          showResultModal(true, `Waterway flushed clean! Cloze test solved:\n"${formedSentence}"`);
+        } else {
+          playSound('burst');
+          triggerBurstAtExit();
+          showResultModal(false, `Pipes connected, but syntax failed!\nBuilt: "${formedSentence}"\nTarget: "${correctSentence}"\nBack-pressure ruptured the joint!`);
+        }
+      } else {
+        playSound('burst');
+        if (burstPoint) triggerBurst(burstPoint.r, burstPoint.c);
+        showResultModal(false, `Water stream escaped before reaching the designated exit!\nReason: ${burstPoint ? burstPoint.reason : 'Out of bounds'}.`);
+      }
+
+      isFlowing = false;
+    }
+
+    function triggerBurst(r, c) {
+      const cell = document.querySelector(`.grid-cell[data-row='${r}'][data-col='${c}']`);
+      if (cell) {
+        cell.classList.add('burst-leak');
+        setTimeout(() => cell.classList.remove('burst-leak'), 1800);
+      }
+    }
+
+    function triggerBurstAtExit() {
+      if (currentExit.side === 'right') triggerBurst(currentExit.index, GRID_SIZE - 1);
+      else if (currentExit.side === 'top') triggerBurst(0, currentExit.index);
+      else if (currentExit.side === 'bottom') triggerBurst(GRID_SIZE - 1, currentExit.index);
+    }
+
+    /* =========================================================================
+       8. 計時開關與暫停控制
+       ========================================================================= */
+    const timerToggleBtn = document.getElementById('btn-toggle-timer');
+
+    // ★ 計時模式切換按鈕事件
+    timerToggleBtn.addEventListener('click', () => {
+      isTimerEnabled = !isTimerEnabled;
+      if (isTimerEnabled) {
+        timerToggleBtn.textContent = "⏱️ TIMER: ON";
+        timerToggleBtn.classList.remove('zen-mode');
+        clearInterval(timerInterval);
+        startPressureTimer();
+      } else {
+        timerToggleBtn.textContent = "🧘 TIMER: OFF (ZEN)";
+        timerToggleBtn.classList.add('zen-mode');
+        clearInterval(timerInterval);
+        startPressureTimer(); // 執行清空重設為 ZEN
+      }
+    });
+
+    const pauseModal = document.getElementById('modal-pause');
+
+    function setPauseState(paused) {
+      if (isFlowing) return;
+      isPaused = paused;
+      if (isPaused) {
+        pauseModal.classList.remove('hidden');
+      } else {
+        pauseModal.classList.add('hidden');
+      }
+    }
+
+    document.getElementById('btn-pause').addEventListener('click', () => setPauseState(true));
+    document.getElementById('btn-resume').addEventListener('click', () => setPauseState(false));
+
+    document.getElementById('btn-pause-restart').addEventListener('click', () => {
+      setPauseState(false);
+      startLevel(currentLevelIdx);
+    });
+
+    document.getElementById('btn-pause-quit').addEventListener('click', () => {
+      setPauseState(false);
+      clearInterval(timerInterval);
+      document.getElementById('game-screen').classList.add('hidden');
+      document.getElementById('start-screen').classList.remove('hidden');
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if ((e.key === 'p' || e.key === 'P') && !document.getElementById('game-screen').classList.contains('hidden')) {
+        setPauseState(!isPaused);
+      }
+    });
+
+    /* =========================================================================
+       9. 題庫自製管理介面
+       ========================================================================= */
+    const modalBank = document.getElementById('modal-bank');
+    const tabListBtn = document.getElementById('tab-btn-list');
+    const tabEditBtn = document.getElementById('tab-btn-edit');
+    const tabJsonBtn = document.getElementById('tab-btn-json');
+
+    const paneList = document.getElementById('tab-pane-list');
+    const paneEdit = document.getElementById('tab-pane-edit');
+    const paneJson = document.getElementById('tab-pane-json');
+
+    function switchBankTab(tab) {
+      [tabListBtn, tabEditBtn, tabJsonBtn].forEach(b => b.classList.remove('active'));
+      [paneList, paneEdit, paneJson].forEach(p => p.classList.add('hidden'));
+
+      if (tab === 'list') {
+        tabListBtn.classList.add('active');
+        paneList.classList.remove('hidden');
+        renderBankListCards();
+      } else if (tab === 'edit') {
+        tabEditBtn.classList.add('active');
+        paneEdit.classList.remove('hidden');
+      } else if (tab === 'json') {
+        tabJsonBtn.classList.add('active');
+        paneJson.classList.remove('hidden');
+        document.getElementById('bank-json-input').value = JSON.stringify(questionBank, null, 2);
+      }
+    }
+
+    tabListBtn.addEventListener('click', () => switchBankTab('list'));
+    tabEditBtn.addEventListener('click', () => { resetBankForm(); switchBankTab('edit'); });
+    tabJsonBtn.addEventListener('click', () => switchBankTab('json'));
+    document.getElementById('btn-to-add-form').addEventListener('click', () => { resetBankForm(); switchBankTab('edit'); });
+
+    function renderBankListCards() {
+      const container = document.getElementById('bank-cards-container');
+      container.innerHTML = '';
+      document.getElementById('bank-count-text').textContent = questionBank.length;
+
+      questionBank.forEach((item, index) => {
+        const parsed = parseClozeData(item.rawSentence);
+        const card = document.createElement('div');
+        card.className = 'bank-item-row';
+        card.innerHTML = `
+          <div class="bank-item-info">
+            <div>
+              <span class="mission-type-tag" style="display:inline-block;">${item.category || 'CLOZE'}</span>
+              <span style="font-size:0.8rem; color:var(--text-main); margin-left:5px;">${item.hint}</span>
+            </div>
+            <div class="bank-item-sentence">${item.rawSentence}</div>
+            <div class="bank-item-meta">
+              Words: ${parsed.correctWords.length} • Exit: ${item.exitSide || 'Auto'} • Time: ${item.timeLimit}s
+            </div>
+          </div>
+          <div style="display:flex; gap:5px;">
+            <button class="btn-sub" style="padding:3px 7px; font-size:0.7rem;" onclick="playDirectLevel(${index})">▶ PLAY</button>
+            <button class="btn-sub" style="padding:3px 7px; font-size:0.7rem;" onclick="editBankItem(${index})">✏️ EDIT</button>
+            <button class="btn-sub" style="padding:3px 7px; font-size:0.7rem; color:#ef4444;" onclick="deleteBankItem(${index})">🗑️</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    const sentenceInput = document.getElementById('form-sentence');
+    const previewBox = document.getElementById('form-word-preview');
+
+    sentenceInput.addEventListener('input', () => {
+      const parsed = parseClozeData(sentenceInput.value);
+      previewBox.innerHTML = '';
+      parsed.correctWords.forEach(w => {
+        const tag = document.createElement('span');
+        tag.className = 'word-tag';
+        tag.textContent = w;
+        previewBox.appendChild(tag);
+      });
+    });
+
+    function resetBankForm() {
+      document.getElementById('edit-form-id').value = '';
+      document.getElementById('form-category').value = '';
+      document.getElementById('form-timelimit').value = '60';
+      document.getElementById('form-hint').value = '';
+      document.getElementById('form-sentence').value = '';
+      document.getElementById('form-distractors').value = '';
+      document.getElementById('form-exit-side').value = 'auto';
+      previewBox.innerHTML = '';
+    }
+
+    window.editBankItem = function(index) {
+      const item = questionBank[index];
+      document.getElementById('edit-form-id').value = index;
+      document.getElementById('form-category').value = item.category || '';
+      document.getElementById('form-timelimit').value = item.timeLimit || 60;
+      document.getElementById('form-hint').value = item.hint || '';
+      document.getElementById('form-sentence').value = item.rawSentence || '';
+      document.getElementById('form-distractors').value = (item.distractors || []).join(", ");
+      document.getElementById('form-exit-side').value = item.exitSide || 'auto';
+
+      sentenceInput.dispatchEvent(new Event('input'));
+      switchBankTab('edit');
+    };
+
+    window.deleteBankItem = function(index) {
+      if (confirm(`Delete level #${index + 1}?`)) {
+        questionBank.splice(index, 1);
+        saveBankToStorage();
+        renderBankListCards();
+      }
+    };
+
+    window.playDirectLevel = function(index) {
+      modalBank.classList.add('hidden');
+      document.getElementById('start-screen').classList.add('hidden');
+      document.getElementById('game-screen').classList.remove('hidden');
+      startLevel(index);
+    };
+
+    document.getElementById('btn-save-form-item').addEventListener('click', () => {
+      const hint = document.getElementById('form-hint').value.trim();
+      const rawSentence = document.getElementById('form-sentence').value.trim();
+      const parsed = parseClozeData(rawSentence);
+
+      if (!hint) { alert("Please provide a prompt/context hint!"); return; }
+      if (parsed.correctWords.length < 5) {
+        alert("Due to 5x5 topology, please provide at least 5 words!");
+        return;
+      }
+
+      const category = document.getElementById('form-category').value.trim() || 'CLOZE';
+      const timeLimit = parseInt(document.getElementById('form-timelimit').value, 10) || 60;
+      const distractorStr = document.getElementById('form-distractors').value.trim();
+      const distractors = distractorStr ? distractorStr.split(/[,，\s]+/).filter(Boolean) : [];
+      const exitSide = document.getElementById('form-exit-side').value;
+
+      const editIdx = document.getElementById('edit-form-id').value;
+      const newQuestion = {
+        id: editIdx !== '' ? questionBank[editIdx].id : 'q_' + Date.now(),
+        category,
+        hint,
+        rawSentence,
+        distractors,
+        exitSide,
+        timeLimit
+      };
+
+      if (editIdx !== '') {
+        questionBank[editIdx] = newQuestion;
+      } else {
+        questionBank.push(newQuestion);
+      }
+
+      saveBankToStorage();
+      alert("Question successfully saved!");
+      switchBankTab('list');
+    });
+
+    document.getElementById('btn-cancel-edit').addEventListener('click', () => switchBankTab('list'));
+
+    function saveBankToStorage() {
+      localStorage.setItem("plumber_bank_cloze_v7", JSON.stringify(questionBank));
+    }
+
+    document.getElementById('btn-save-json').addEventListener('click', () => {
+      try {
+        const parsed = JSON.parse(document.getElementById('bank-json-input').value);
+        if (!Array.isArray(parsed) || parsed.length === 0) throw new Error("JSON must be a valid array!");
+        questionBank = parsed;
+        saveBankToStorage();
+        alert("JSON imported successfully!");
+        switchBankTab('list');
+      } catch (err) {
+        alert("JSON Error: " + err.message);
+      }
+    });
+
+    document.getElementById('btn-reset-default-bank').addEventListener('click', () => {
+      if (confirm("Restore original level presets?")) {
+        questionBank = DEFAULT_QUESTION_BANK;
+        localStorage.removeItem("plumber_bank_cloze_v7");
+        document.getElementById('bank-json-input').value = JSON.stringify(questionBank, null, 2);
+        renderBankListCards();
+        alert("Default levels restored!");
+      }
+    });
+
+    /* =========================================================================
+       10. 結算與畫面導覽
+       ========================================================================= */
+    function showResultModal(isWin, desc) {
+      const modal = document.getElementById('modal-result');
+      const title = document.getElementById('result-title');
+      const descEl = document.getElementById('result-desc');
+      const btnNext = document.getElementById('btn-next-level');
+
+      modal.classList.remove('hidden');
+      if (isWin) {
+        title.textContent = "🎉 WATERWAY CLEARED!";
+        title.style.color = "#38bdf8";
+        btnNext.style.display = "inline-block";
+      } else {
+        title.textContent = "⚠️ PIPE BURST / LEAK DETECTED";
+        title.style.color = "#ef4444";
+        btnNext.style.display = "none";
+      }
+      descEl.textContent = desc;
+    }
+
+    document.getElementById('btn-play').addEventListener('click', () => {
+      document.getElementById('start-screen').classList.add('hidden');
+      document.getElementById('game-screen').classList.remove('hidden');
+      startLevel(0);
+    });
+
+    document.getElementById('btn-back-menu').addEventListener('click', () => {
+      clearInterval(timerInterval);
+      document.getElementById('game-screen').classList.add('hidden');
+      document.getElementById('start-screen').classList.remove('hidden');
+    });
+
+    document.getElementById('btn-retry-level').addEventListener('click', () => {
+      document.getElementById('modal-result').classList.add('hidden');
+      startLevel(currentLevelIdx);
+    });
+
+    document.getElementById('btn-next-level').addEventListener('click', () => {
+      document.getElementById('modal-result').classList.add('hidden');
+      startLevel(currentLevelIdx + 1);
+    });
+
+    document.getElementById('btn-open-credits').addEventListener('click', () => {
+      document.getElementById('modal-credits').classList.remove('hidden');
+    });
+    document.getElementById('btn-close-credits').addEventListener('click', () => {
+      document.getElementById('modal-credits').classList.add('hidden');
+    });
+
+    document.getElementById('btn-open-bank').addEventListener('click', () => {
+      switchBankTab('list');
+      modalBank.classList.remove('hidden');
+    });
+    document.getElementById('btn-close-bank').addEventListener('click', () => {
+      modalBank.classList.add('hidden');
+    });
+  </script>
+</body>
+</html>
