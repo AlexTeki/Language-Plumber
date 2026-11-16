@@ -18,7 +18,17 @@
       --leak-red: #ef4444;
       --text-main: #f8fafc;
       --text-dim: #94a3b8;
-      /* ★ 方格擴大至 76px，大幅提升單字容納空間 */
+
+      /* Pipe SVG theme variables (Classic Industrial) */
+      --pipe-shell: #3b4b5e;
+      --pipe-stroke: #1e293b;
+      --pipe-flange: #f59e0b;
+      --pipe-flange-stroke: #78350f;
+      --pipe-inner: #06090e;
+      --pipe-water: #38bdf8;
+      --pipe-water-glow: #0284c7;
+
+      /* Classic 5x5 cell dimensions */
       --cell-size: 76px;
       --cell-gap: 6px;
     }
@@ -40,9 +50,13 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      transition: background 0.35s ease;
     }
 
-    /* 容器隨擴大後的網格適度調整寬高，確保仍一屏無上下捲軸 */
+    body.baby-body-bg {
+      background: linear-gradient(135deg, #bae6fd 0%, #fbcfe8 50%, #fef08a 100%);
+    }
+
     #app-container {
       width: 1120px;
       max-width: 98vw;
@@ -56,6 +70,177 @@
       flex-direction: column;
       padding: 10px 16px;
       overflow: hidden;
+      transition: all 0.35s ease;
+    }
+
+    /* =========================================================================
+       BABY MODE: Macaron Pastel Theme & 3x3 Dimensions
+       ========================================================================= */
+    #app-container.baby-mode {
+      --cell-size: 128px;
+      --cell-gap: 10px;
+      --pipe-shell: #f9a8d4;
+      --pipe-stroke: #f472b6;
+      --pipe-flange: #fde047;
+      --pipe-flange-stroke: #eab308;
+      --pipe-inner: #ffffff;
+      --pipe-water: #38bdf8;
+      --pipe-water-glow: #0ea5e9;
+
+      background: linear-gradient(150deg, #fff1f2 0%, #e0f2fe 52%, #fefce8 100%);
+      border: 6px solid #7dd3fc;
+      border-radius: 26px;
+      box-shadow: 0 14px 36px rgba(56, 189, 248, 0.28), inset 0 0 24px rgba(255, 255, 255, 0.9);
+      color: #334155;
+    }
+
+    #app-container.baby-mode .rivet {
+      width: 14px;
+      height: 14px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.12);
+    }
+    #app-container.baby-mode .r-tl { background: #fda4af; }
+    #app-container.baby-mode .r-tr { background: #93c5fd; }
+    #app-container.baby-mode .r-bl { background: #86efac; }
+    #app-container.baby-mode .r-br { background: #fde047; }
+
+    #app-container.baby-mode #game-header {
+      background: rgba(255, 255, 255, 0.9);
+      border: 3px solid #bae6fd;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(14, 165, 233, 0.12);
+      padding: 8px 16px;
+    }
+    #app-container.baby-mode .mission-type-tag {
+      background: #f472b6;
+      border-radius: 999px;
+      padding: 2px 10px;
+      font-size: 0.78rem;
+    }
+    #app-container.baby-mode .cloze-hint-text {
+      color: #0284c7;
+      font-size: 0.92rem;
+    }
+    #app-container.baby-mode .cloze-sentence-display {
+      color: #1e293b;
+      font-size: 1.45rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #app-container.baby-mode .cloze-blank-slot {
+      background: #fef9c3;
+      border: 2px dashed #f59e0b;
+      border-radius: 10px;
+      color: #d97706;
+      box-shadow: none;
+    }
+
+    #app-container.baby-mode .btn-sub {
+      background: #e0f2fe;
+      color: #0369a1;
+      border: 2px solid #7dd3fc;
+      border-radius: 12px;
+    }
+    #app-container.baby-mode .btn-sub:hover {
+      background: #bae6fd;
+    }
+
+    #app-container.baby-mode .grid-stage {
+      background: linear-gradient(180deg, #e0f2fe 0%, #f0fdf4 100%);
+      border: 3px solid #a5f3fc;
+      border-radius: 20px;
+      box-shadow: inset 0 0 20px rgba(255,255,255,0.8);
+    }
+
+    #app-container.baby-mode #grid {
+      grid-template-columns: repeat(3, var(--cell-size));
+      grid-template-rows: repeat(3, var(--cell-size));
+      background: #f0f9ff;
+      border: 4px solid #bae6fd;
+      border-radius: 16px;
+      box-shadow: inset 0 0 12px rgba(56, 189, 248, 0.18);
+    }
+    #app-container.baby-mode .io-top-slot,
+    #app-container.baby-mode .io-bottom-slot {
+      grid-template-columns: repeat(3, var(--cell-size));
+    }
+    #app-container.baby-mode .io-left-slot,
+    #app-container.baby-mode .io-right-slot {
+      grid-template-rows: repeat(3, var(--cell-size));
+    }
+
+    #app-container.baby-mode .grid-cell {
+      background: rgba(255, 255, 255, 0.85);
+      border: 3px dashed #93c5fd;
+      border-radius: 16px;
+    }
+    #app-container.baby-mode .grid-cell:hover {
+      background: #ffffff;
+      border-color: #f472b6;
+      transform: scale(1.02);
+    }
+    #app-container.baby-mode .grid-cell.baby-guide-cell {
+      background: #fefce8;
+      border-color: #facc15;
+      box-shadow: inset 0 0 12px rgba(250, 204, 21, 0.25);
+    }
+
+    #app-container.baby-mode .inventory-panel {
+      width: 270px;
+      background: linear-gradient(180deg, #fffbeb 0%, #fdf2f8 100%);
+      border: 3px solid #f9a8d4;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(244, 114, 182, 0.18);
+    }
+    #app-container.baby-mode .inventory-header {
+      border-bottom: 2px dashed #fbcfe8;
+    }
+    #app-container.baby-mode .inventory-header h3 {
+      color: #db2777;
+      font-size: 1.05rem;
+    }
+    #app-container.baby-mode .inventory-slots {
+      grid-auto-rows: 112px;
+      gap: 10px;
+    }
+    #app-container.baby-mode .inv-item {
+      background: #ffffff;
+      border: 3px solid #93c5fd;
+      border-radius: 16px;
+      box-shadow: 0 4px 10px rgba(147, 197, 253, 0.35);
+    }
+    #app-container.baby-mode .inv-item:hover {
+      border-color: #f472b6;
+      box-shadow: 0 6px 14px rgba(244, 114, 182, 0.35);
+    }
+    #app-container.baby-mode .inv-item.selected {
+      border-color: #f59e0b;
+      background: #fefce8;
+      box-shadow: 0 0 16px rgba(251, 191, 36, 0.65);
+    }
+
+    #app-container.baby-mode .word-badge {
+      background: #ffffff;
+      border: 2.5px solid #f472b6;
+      color: #1e293b;
+      border-radius: 999px;
+      font-size: 1.15rem;
+      padding: 4px 12px;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
+    }
+    #app-container.baby-mode .word-badge.long-text {
+      font-size: 0.95rem;
+      padding: 3px 8px;
+    }
+
+    #app-container.baby-mode .burst-leak {
+      animation: gentleSplash 0.45s infinite alternate;
+      border-color: #38bdf8 !important;
+    }
+    @keyframes gentleSplash {
+      0% { transform: scale(1); filter: drop-shadow(0 0 6px #38bdf8); }
+      100% { transform: scale(1.06); filter: drop-shadow(0 0 16px #38bdf8); }
     }
 
     .rivet {
@@ -177,7 +362,7 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
-      width: 280px;
+      width: 290px;
     }
 
     button {
@@ -204,6 +389,27 @@
       transform: translateY(2px);
       box-shadow: 0 2px 0 #7c3a07;
     }
+
+    .btn-macaron {
+      background: linear-gradient(135deg, #f472b6 0%, #38bdf8 100%);
+      color: #fff;
+      font-size: 1.08rem;
+      font-weight: 800;
+      padding: 12px 20px;
+      border-radius: 14px;
+      border: 2px solid #fef08a;
+      box-shadow: 0 4px 0 #0284c7, 0 6px 14px rgba(244, 114, 182, 0.35);
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.25);
+    }
+    .btn-macaron:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 6px 0 #0284c7, 0 8px 18px rgba(56, 189, 248, 0.45);
+    }
+    .btn-macaron:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #0284c7;
+    }
+
     .btn-sub {
       background: var(--iron);
       color: var(--text-main);
@@ -217,7 +423,6 @@
       background: #475569;
     }
 
-    /* 計時模式切換鈕樣式 */
     .btn-timer-toggle {
       font-weight: 700;
       transition: all 0.2s;
@@ -285,6 +490,17 @@
       box-shadow: inset 0 0 5px rgba(245, 158, 11, 0.2);
     }
 
+    .btn-speak-prompt {
+      background: #38bdf8;
+      color: #fff;
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 0.82rem;
+      font-weight: bold;
+      box-shadow: 0 2px 6px rgba(56, 189, 248, 0.4);
+    }
+    .btn-speak-prompt:hover { transform: scale(1.08); }
+
     .header-ctrl-group {
       display: flex;
       gap: 8px;
@@ -314,11 +530,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 484px; /* 與放大後的 board-wrapper 完全等高 */
+      height: 484px;
     }
 
     /* =========================================================================
-       3. 左側水壓表（ANALOG PRESSURE GAUGE）與管線 (高度適配 484px)
+       3. LEFT PRESSURE GAUGE & PIPES
        ========================================================================= */
     .curved-timer-column {
       width: 80px;
@@ -363,7 +579,29 @@
       text-shadow: 0 1px 3px #000;
     }
 
-    /* 3x3 幾何對齊母盤 (網格擴大至 404px，中線鎖定 Y=242px) */
+    .baby-bubble-badge {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #ffffff 0%, #bae6fd 55%, #38bdf8 100%);
+      border: 4px solid #fde047;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0;
+      z-index: 10;
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.35);
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+    .baby-bubble-badge span {
+      font-size: 0.6rem;
+      font-weight: 800;
+      color: #0369a1;
+      margin-top: 2px;
+    }
+
     .board-wrapper {
       display: grid;
       grid-template-columns: 60px 404px 60px;
@@ -410,7 +648,6 @@
       gap: var(--cell-gap);
     }
 
-    /* 放大至 404x404 的 5x5 水管網格 */
     #grid {
       grid-column: 2;
       grid-row: 2;
@@ -436,11 +673,46 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      transition: background 0.15s, border-color 0.15s;
+      transition: background 0.15s, border-color 0.15s, transform 0.15s;
     }
     .grid-cell:hover {
       background: #141d29;
       border-color: #475569;
+    }
+
+    .guide-drop-hint {
+      font-size: 1.5rem;
+      opacity: 0.45;
+      pointer-events: none;
+      animation: floatDrop 1.8s ease-in-out infinite;
+    }
+    @keyframes floatDrop {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    .cell-return-btn {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #fef08a;
+      border: 1.5px solid #f59e0b;
+      color: #b45309;
+      font-size: 0.72rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      padding: 0;
+    }
+    .cell-return-btn:hover {
+      background: #fde047;
+      transform: scale(1.12);
     }
 
     .io-port-cell {
@@ -461,6 +733,29 @@
       justify-content: center;
       position: relative;
     }
+    .faucet-ready-pulse {
+      animation: faucetPulse 1s ease-in-out infinite alternate;
+    }
+    @keyframes faucetPulse {
+      0% { transform: scale(1); filter: drop-shadow(0 0 4px #fde047); }
+      100% { transform: scale(1.12); filter: drop-shadow(0 0 14px #f472b6); }
+    }
+    .faucet-tap-hint {
+      position: absolute;
+      top: -22px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #f472b6;
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 999px;
+      white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(244, 114, 182, 0.5);
+      pointer-events: none;
+    }
+
     .faucet-svg-icon {
       width: 60px;
       height: 60px;
@@ -489,52 +784,66 @@
       box-shadow: 0 0 8px rgba(224, 169, 70, 0.4);
       position: relative;
     }
-    .output-tank.top {
-      width: 68px;
-      height: 30px;
-      margin-bottom: -2px;
-    }
+    .output-tank.top { width: 68px; height: 30px; margin-bottom: -2px; }
     .output-tank.top::after {
-      content: '';
-      position: absolute;
-      bottom: -5px;
-      width: 18px;
-      height: 5px;
-      background: var(--copper);
-      border: 1px solid #451a03;
-      border-top: none;
+      content: ''; position: absolute; bottom: -5px; width: 18px; height: 5px;
+      background: var(--copper); border: 1px solid #451a03; border-top: none;
     }
-
-    .output-tank.bottom {
-      width: 68px;
-      height: 30px;
-      margin-top: -2px;
-    }
+    .output-tank.bottom { width: 68px; height: 30px; margin-top: -2px; }
     .output-tank.bottom::before {
-      content: '';
-      position: absolute;
-      top: -5px;
-      width: 18px;
-      height: 5px;
-      background: var(--copper);
-      border: 1px solid #451a03;
-      border-bottom: none;
+      content: ''; position: absolute; top: -5px; width: 18px; height: 5px;
+      background: var(--copper); border: 1px solid #451a03; border-bottom: none;
+    }
+    .output-tank.right { width: 54px; height: 64px; margin-left: -2px; }
+    .output-tank.right::before {
+      content: ''; position: absolute; left: -5px; width: 5px; height: 18px;
+      background: var(--copper); border: 1px solid #451a03; border-right: none;
     }
 
-    .output-tank.right {
-      width: 54px;
-      height: 64px;
+    /* Rubber Duck Output */
+    .duck-pond-tank {
+      background: linear-gradient(180deg, #ffffff 0%, #bae6fd 100%);
+      border: 3px solid #38bdf8;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.35);
+      position: relative;
+      color: #0369a1;
+      font-weight: 800;
+    }
+    .duck-pond-tank.top { width: 112px; height: 34px; margin-bottom: -2px; }
+    .duck-pond-tank.bottom { width: 112px; height: 34px; margin-top: -2px; }
+    .duck-pond-tank.right {
+      width: 60px;
+      height: 92px;
+      flex-direction: column;
       margin-left: -2px;
     }
-    .output-tank.right::before {
-      content: '';
-      position: absolute;
-      left: -5px;
-      width: 5px;
-      height: 18px;
-      background: var(--copper);
-      border: 1px solid #451a03;
-      border-right: none;
+    .duck-icon {
+      font-size: 1.45rem;
+      line-height: 1;
+      display: inline-block;
+      transition: transform 0.25s;
+    }
+    .duck-pond-tank.right .duck-icon { font-size: 2rem; }
+    .duck-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.4px;
+    }
+    .duck-pond-tank.duck-happy {
+      background: linear-gradient(180deg, #fef9c3 0%, #7dd3fc 100%);
+      border-color: #f472b6;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.8);
+    }
+    .duck-pond-tank.duck-happy .duck-icon {
+      animation: duckJump 0.45s ease-in-out infinite alternate;
+    }
+    @keyframes duckJump {
+      0% { transform: translateY(0) rotate(-6deg) scale(1); }
+      100% { transform: translateY(-7px) rotate(8deg) scale(1.2); }
     }
 
     .pipe-piece {
@@ -555,7 +864,7 @@
     }
 
     /* =========================================================================
-       4. 醒目水管庫存區（加闊以完全展現單字）
+       4. INVENTORY PANEL
        ========================================================================= */
     .inventory-panel {
       width: 250px;
@@ -620,7 +929,6 @@
       100% { transform: scale(1.04); }
     }
 
-    /* ★ 燙金浮雕單字標籤：無裁剪、全展開 */
     .word-badge {
       position: relative;
       z-index: 2;
@@ -639,7 +947,6 @@
       letter-spacing: 0.2px;
       text-align: center;
     }
-    /* 超長單字（>7 字母）自適應緊湊排版 */
     .word-badge.long-text {
       font-size: 0.76rem;
       letter-spacing: -0.3px;
@@ -656,7 +963,7 @@
     }
 
     /* =========================================================================
-       5. MODALS
+       5. MODALS & CUSTOM QUESTION BANK BUILDER
        ========================================================================= */
     .modal-overlay {
       position: absolute;
@@ -668,10 +975,13 @@
       align-items: center;
       z-index: 100;
     }
+    #app-container.baby-mode .modal-overlay {
+      background: rgba(186, 230, 253, 0.65);
+    }
     .modal-box-large {
-      width: 760px;
+      width: 780px;
       max-width: 95%;
-      height: min(600px, 88vh);
+      height: min(630px, 90vh);
       background: var(--panel-bg);
       border: 3px solid var(--copper);
       border-radius: 12px;
@@ -680,6 +990,49 @@
       flex-direction: column;
       overflow: hidden;
     }
+    #app-container.baby-mode .modal-box-large,
+    #app-container.baby-mode .pause-modal-box {
+      background: #ffffff;
+      border: 4px solid #f472b6;
+      border-radius: 22px;
+      color: #334155;
+      box-shadow: 0 12px 35px rgba(56, 189, 248, 0.35);
+    }
+    #app-container.baby-mode .result-detail {
+      color: #475569;
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    /* Mode Switcher inside Level Builder */
+    .bank-mode-switcher {
+      display: flex;
+      gap: 8px;
+      padding: 10px 14px;
+      background: #080c12;
+      border-bottom: 1px solid var(--iron);
+    }
+    .mode-switch-btn {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 0.88rem;
+      background: #1e293b;
+      color: var(--text-dim);
+      border: 2px solid transparent;
+    }
+    .mode-switch-btn.active-classic {
+      background: rgba(245, 158, 11, 0.16);
+      color: var(--brass);
+      border-color: var(--copper-bright);
+    }
+    .mode-switch-btn.active-baby {
+      background: linear-gradient(135deg, rgba(244, 114, 182, 0.25) 0%, rgba(56, 189, 248, 0.25) 100%);
+      color: #f9a8d4;
+      border-color: #38bdf8;
+    }
+
     .modal-tabs {
       display: flex;
       background: #0d131a;
@@ -767,6 +1120,11 @@
       font-size: 0.72rem;
       font-weight: bold;
     }
+    .word-tag.baby-tag {
+      background: #db2777;
+      border-radius: 999px;
+      padding: 2px 10px;
+    }
 
     .pause-modal-box {
       width: 340px;
@@ -809,7 +1167,7 @@
     <div class="rivet r-bl"></div>
     <div class="rivet r-br"></div>
 
-    <!-- 1. 開始畫面 -->
+    <!-- 1. START SCREEN -->
     <div id="start-screen" class="screen">
       <svg class="bg-gear gear-1" viewBox="0 0 100 100">
         <path d="M50 35 A15 15 0 1 0 50 65 A15 15 0 1 0 50 35 M46 15 L54 15 L56 22 L64 25 L70 20 L76 26 L72 33 L76 40 L84 41 L84 49 L77 52 L76 60 L82 66 L76 72 L69 68 L62 72 L61 80 L53 80 L50 73 L42 72 L37 78 L31 72 L35 65 L30 58 L22 57 L22 49 L29 46 L30 38 L24 32 L30 26 L37 30 L44 26 Z"/>
@@ -833,14 +1191,15 @@
         </div>
 
         <div class="menu-btn-group">
-          <button class="btn-copper" id="btn-play">START GAME</button>
+          <button class="btn-copper" id="btn-play">START GAME (5×5)</button>
+          <button class="btn-macaron" id="btn-play-baby">🐣 BABY MODE (3×3)</button>
           <button class="btn-sub" id="btn-open-bank">CUSTOM LEVEL BUILDER</button>
           <button class="btn-sub" id="btn-open-credits">CREDITS</button>
         </div>
       </div>
     </div>
 
-    <!-- 2. 遊戲主畫面（大方格 + 計時模式開關） -->
+    <!-- 2. GAME SCREEN -->
     <div id="game-screen" class="screen hidden">
       <div id="game-header">
         <div class="cloze-container">
@@ -854,7 +1213,9 @@
         </div>
 
         <div class="header-ctrl-group">
-          <!-- ★ 計時模式開關鈕 -->
+          <button class="btn-sub" id="btn-toggle-voice" title="Toggle voice reading">
+            🔊 VOICE: ON
+          </button>
           <button class="btn-sub btn-timer-toggle" id="btn-toggle-timer" title="Toggle countdown pressure vs relaxed zen mode">
             ⏱️ TIMER: ON
           </button>
@@ -866,9 +1227,9 @@
       <div id="game-main-area">
         <div class="grid-stage">
           <div class="stage-content-row">
-            <!-- 左側水壓表（高度調整適配 484px 舞台，中線維持精確對齊） -->
+            <!-- Left Gauge / Baby Fun Bubble -->
             <div class="curved-timer-column">
-              <div class="analog-gauge-wrapper">
+              <div class="analog-gauge-wrapper" id="classic-gauge-box">
                 <svg class="gauge-svg" viewBox="0 0 76 76">
                   <defs>
                     <radialGradient id="gaugeMetalBezel" cx="40%" cy="40%" r="60%">
@@ -904,7 +1265,11 @@
                 <div class="gauge-digital-readout" id="timer-text">60s</div>
               </div>
 
-              <!-- 蓄壓管線：總高 408，中線轉折 Y=166，加上上方 76px 儀表，總 Y=242 完美直入水龍頭 -->
+              <div class="baby-bubble-badge hidden" id="baby-gauge-box">
+                🫧
+                <span>FUN</span>
+              </div>
+
               <svg viewBox="0 0 76 408" style="width:100%; height:408px;">
                 <defs>
                   <linearGradient id="pipeMetalGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -935,7 +1300,7 @@
               </svg>
             </div>
 
-            <!-- ★ 放大後的 3x3 幾何母盤（每格 76px） -->
+            <!-- 3x3 / 5x5 Board Wrapper -->
             <div class="board-wrapper">
               <div class="io-top-slot" id="top-io-row"></div>
               <div class="io-left-slot" id="left-io-col"></div>
@@ -946,14 +1311,14 @@
           </div>
         </div>
 
-        <!-- 醒目庫存槽（增寬至 250px） -->
+        <!-- Inventory Panel -->
         <div class="inventory-panel">
           <div class="inventory-header">
-            <h3>PIPE INVENTORY</h3>
+            <h3 id="inventory-title">PIPE INVENTORY</h3>
             <button class="btn-sub" id="btn-reroll-all" style="padding: 2px 7px; font-size: 0.72rem;">REROLL</button>
           </div>
           <div class="inventory-slots" id="inventory-list"></div>
-          <div style="font-size: 0.68rem; color: var(--text-dim); margin-top: 6px; line-height: 1.35;">
+          <div id="inventory-controls-tip" style="font-size: 0.68rem; color: var(--text-dim); margin-top: 6px; line-height: 1.35;">
             💡 <b>Controls</b>:<br>
             • <b>Timer Mode</b>: Toggle ON/OFF in header anytime.<br>
             • <b>Rotate</b>: Left-click placed pipe to turn 90°.<br>
@@ -963,75 +1328,142 @@
       </div>
     </div>
 
-    <!-- 暫停視窗 -->
+    <!-- PAUSE MODAL -->
     <div id="modal-pause" class="modal-overlay hidden">
       <div class="pause-modal-box">
         <h2>GAME PAUSED</h2>
-        <p style="color: var(--text-dim); font-size: 0.85rem; margin: 0;">Water pressure halted. Plan your grammar route carefully!</p>
+        <p style="color: var(--text-dim); font-size: 0.85rem; margin: 0;">Water flow paused. Take your time and plan your route!</p>
         <button class="btn-copper" id="btn-resume">RESUME FLOW</button>
         <button class="btn-sub" id="btn-pause-restart">RESTART LEVEL</button>
         <button class="btn-sub" id="btn-pause-quit">QUIT TO MENU</button>
       </div>
     </div>
 
-    <!-- 題庫自製視窗 -->
+    <!-- CUSTOM LEVEL BUILDER MODAL (Classic 5x5 + Independent Baby 3x3 Bank) -->
     <div id="modal-bank" class="modal-overlay hidden">
       <div class="modal-box-large">
+        <!-- Mode Bank Switcher -->
+        <div class="bank-mode-switcher">
+          <button class="mode-switch-btn active-classic" id="switch-bank-classic">
+            ⚙️ CLASSIC BANK (5×5)
+          </button>
+          <button class="mode-switch-btn" id="switch-bank-baby">
+            🐣 BABY MODE BANK (3×3)
+          </button>
+        </div>
+
         <div class="modal-tabs">
           <button class="tab-btn active" id="tab-btn-list">📋 QUESTION LIST</button>
           <button class="tab-btn" id="tab-btn-edit">➕ CREATE / EDIT</button>
           <button class="tab-btn" id="tab-btn-json">💾 JSON BACKUP</button>
         </div>
 
+        <!-- TAB 1: LIST -->
         <div class="modal-content-area" id="tab-pane-list">
           <div style="display: flex; justify-content: space-between; margin-bottom: 10px; align-items: center;">
-            <span style="font-size: 0.85rem; color: var(--text-dim);"><b id="bank-count-text">0</b> Levels Ready</span>
+            <span style="font-size: 0.85rem; color: var(--text-dim);">
+              <b id="bank-mode-label" style="color: var(--brass);">CLASSIC (5×5)</b> — <b id="bank-count-text">0</b> Levels Ready
+            </span>
             <button class="btn-copper" id="btn-to-add-form" style="padding: 5px 12px; font-size: 0.8rem;">＋ NEW QUESTION</button>
           </div>
           <div id="bank-cards-container"></div>
         </div>
 
+        <!-- TAB 2: CREATE / EDIT -->
         <div class="modal-content-area hidden" id="tab-pane-edit">
           <input type="hidden" id="edit-form-id">
-          
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div class="form-group">
-              <label>Grammar Category</label>
-              <input type="text" id="form-category" placeholder="e.g. Past Continuous, Phrasal Verbs">
+
+          <!-- CLASSIC 5x5 FORM -->
+          <div id="classic-edit-fields">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <div class="form-group">
+                <label>Grammar Category</label>
+                <input type="text" id="form-category" placeholder="e.g. Past Continuous, Phrasal Verbs">
+              </div>
+              <div class="form-group">
+                <label>Time Limit (Seconds)</label>
+                <input type="number" id="form-timelimit" value="60" min="30" max="180">
+              </div>
             </div>
+
             <div class="form-group">
-              <label>Time Limit (Seconds)</label>
-              <input type="number" id="form-timelimit" value="60" min="30" max="180">
+              <label>Sentence Prompt / Meaning Hint</label>
+              <input type="text" id="form-hint" placeholder="e.g. Clue: He quit smoking last winter (phrasal verb)">
+            </div>
+
+            <div class="form-group">
+              <label>Target Sentence (Use [brackets] around cloze blanks)</label>
+              <input type="text" id="form-sentence" placeholder="e.g. He [gave] [up] smoking last winter">
+              <div style="font-size: 0.72rem; color: var(--text-dim); margin-top: 3px;">
+                Live Word Tokens &amp; Cloze Blanks Preview:
+              </div>
+              <div class="word-preview-box" id="form-word-preview"></div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 10px;">
+              <div class="form-group">
+                <label>Distractor Words (Separated by commas/spaces)</label>
+                <input type="text" id="form-distractors" placeholder="e.g. was, play">
+              </div>
+              <div class="form-group">
+                <label>Outlet Direction</label>
+                <select id="form-exit-side">
+                  <option value="auto">🤖 Auto-Recommend (Guaranteed Solvable)</option>
+                  <option value="right">➡️ Right Side (Horizontal)</option>
+                  <option value="top">⬆️ Top Side (Ascending)</option>
+                  <option value="bottom">⬇️ Bottom Side (Descending)</option>
+                </select>
+              </div>
             </div>
           </div>
 
-          <div class="form-group">
-            <label>Sentence Prompt / Meaning Hint</label>
-            <input type="text" id="form-hint" placeholder="e.g. Context: 他去年冬天戒菸了 (give up)">
-          </div>
-
-          <div class="form-group">
-            <label>Target Sentence (Use [brackets] around cloze blanks)</label>
-            <input type="text" id="form-sentence" placeholder="e.g. He [gave] [up] smoking last winter">
-            <div style="font-size: 0.72rem; color: var(--text-dim); margin-top: 3px;">
-              Live Word Tokens &amp; Cloze Blanks Preview:
+          <!-- BABY MODE 3x3 FORM -->
+          <div id="baby-edit-fields" class="hidden">
+            <div style="display: grid; grid-template-columns: 1fr 1.3fr; gap: 10px;">
+              <div class="form-group">
+                <label>Topic / Category</label>
+                <input type="text" id="baby-form-category" placeholder="e.g. PHONICS, 123 COUNT, ANIMALS">
+              </div>
+              <div class="form-group">
+                <label>3×3 Path Layout (Guaranteed Solvable)</label>
+                <select id="baby-form-layout">
+                  <option value="auto">🤖 Auto-Match Token Count (3–5 pipes)</option>
+                  <option value="p3_right">3 pipes: Straight Across (→ Right)</option>
+                  <option value="p3_bottom">3 pipes: Down to Bottom (↓ Bottom)</option>
+                  <option value="p3_top">3 pipes: Up to Top (↑ Top)</option>
+                  <option value="p4_top_right">4 pipes: Turn Up (↑ Top Right)</option>
+                  <option value="p4_right_top">4 pipes: Step Up (→ Top Right)</option>
+                  <option value="p4_bottom_right">4 pipes: Turn Down (↓ Bottom Right)</option>
+                  <option value="p4_right_bottom">4 pipes: Step Down (→ Bottom Right)</option>
+                  <option value="p5_loop_up">5 pipes: Loop Up (→ Right)</option>
+                  <option value="p5_loop_down">5 pipes: Loop Down (→ Right)</option>
+                </select>
+              </div>
             </div>
-            <div class="word-preview-box" id="form-word-preview"></div>
-          </div>
 
-          <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 10px;">
             <div class="form-group">
-              <label>Distractor Words (Separated by commas/spaces)</label>
-              <input type="text" id="form-distractors" placeholder="e.g. was, play">
+              <label>Kid-Friendly Hint</label>
+              <input type="text" id="baby-form-hint" placeholder="e.g. Spell the cute kitty: C - A - T!">
             </div>
+
             <div class="form-group">
-              <label>Outlet Direction</label>
-              <select id="form-exit-side">
-                <option value="auto">🤖 Auto-Recommend (Guaranteed Solvable)</option>
-                <option value="right">➡️ Right Side (Horizontal)</option>
-                <option value="top">⬆️ Top Side (Ascending)</option>
-                <option value="bottom">⬇️ Bottom Side (Descending)</option>
-              </select>
+              <label>Pipe Tokens (3 to 5 items, separated by commas)</label>
+              <input type="text" id="baby-form-tokens" placeholder="e.g. C, A, T  or  🌧️ rain, 🌱 seed, 🌸 flower">
+              <div style="font-size: 0.72rem; color: var(--text-dim); margin-top: 3px;">
+                Live Toy Pipe Badges Preview:
+              </div>
+              <div class="word-preview-box" id="baby-form-preview"></div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <div class="form-group">
+                <label>Header Display Prompt (Optional)</label>
+                <input type="text" id="baby-form-display" placeholder="Auto-generated if left blank (e.g. 🐱 C - A - T)">
+              </div>
+              <div class="form-group">
+                <label>Voice Readout Text (Optional)</label>
+                <input type="text" id="baby-form-speech" placeholder="Auto-generated if left blank">
+              </div>
             </div>
           </div>
 
@@ -1041,11 +1473,12 @@
           </div>
         </div>
 
+        <!-- TAB 3: JSON BACKUP -->
         <div class="modal-content-area hidden" id="tab-pane-json">
           <p style="font-size: 0.8rem; color: var(--text-dim); margin-top: 0;">
-            Export or import full JSON question structures below:
+            Export or import full JSON question structures for the <b id="json-mode-label" style="color: var(--brass);">CLASSIC (5×5)</b> bank below:
           </p>
-          <textarea id="bank-json-input" style="width: 100%; height: 320px; background: #0c1118; color: #f8fafc; border: 1px solid var(--iron); border-radius: 6px; padding: 8px; font-family: monospace; font-size: 0.85rem;"></textarea>
+          <textarea id="bank-json-input" style="width: 100%; height: 300px; background: #0c1118; color: #f8fafc; border: 1px solid var(--iron); border-radius: 6px; padding: 8px; font-family: monospace; font-size: 0.85rem;"></textarea>
           <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px;">
             <button class="btn-sub" id="btn-reset-default-bank">RESTORE DEFAULT</button>
             <button class="btn-copper" id="btn-save-json">APPLY JSON</button>
@@ -1058,33 +1491,29 @@
       </div>
     </div>
 
-    <!-- 製作名單視窗 -->
+    <!-- CREDITS MODAL -->
     <div id="modal-credits" class="modal-overlay hidden">
-      <!-- 加上 max-height 與 overflow-y: auto -->
       <div class="modal-box-large" style="width: 480px; max-height: 80vh; overflow-y: auto; padding: 20px; text-align: center;">
         <h2 style="color: var(--brass); margin-top: 0; font-size: 1.4rem;">CREDITS</h2>
         <p style="color: var(--copper-bright); font-weight: bold; margin-bottom: 8px;">Language Plumber Pro</p>
         <div style="font-size: 0.85rem; color: var(--text-dim); line-height: 1.7; text-align: left; margin: 12px 0;">
-          🛠️ <b>What is the purpose of your app? (which aspect of language learning it targets)</b>: By combining language learning with gameplay, this app helps learners study grammar (especially sentence structure and word order) and vocabulary at the same time without getting bored. Learners can also turn off the countdown timer and play without anxiety. Most importantly, language learning is built into the game itself, so learners don’t feel like they are taking a test. This avoids the “chocolate-dipped broccoli” problem, where learning content is simply added on top of a game.<br>
-          🚰 <b>How long did you spend on it?</b>:I spent 2 hours and used 199,372 tokens.<br>
+          🛠️ <b>What is the purpose of your app? (which aspect of language learning it targets)</b>: By combining language learning with gameplay, this app helps learners study grammar (especially sentence structure and word order) and vocabulary at the same time without getting bored. Learners can also turn off the countdown timer and play without anxiety. Most importantly, language learning is built into the game itself, so learners don’t feel like they are taking a test. This avoids the “chocolate-covered broccoli” problem, where learning content is simply added on top of a game.<br>
+          🚰 <b>How long did you spend on it?</b>: I spent 2 hours and used 199,372 tokens.<br>
           ⏱️ <b>What prompts did you give to make the app</b>: <br>As following:<br>
 <b>[Role] </b>You are a full-stack web developer and game designer.<br>
-
 <b>[Goal]</b> Using HTML, CSS, and JavaScript (all in a single file for easy testing), build a web app called “Language Learning Plumber.”<br>
-
 <b>[Feature Requirements]</b><br>
 Start screen: a Start button, Credits, and a custom question bank area.<br>
 Game screen: The inventory area provides different pipes depending on the question. Each pipe is labeled with a word, phrase, etc. The player takes pipes from the inventory area and places them in the answer area to build a connected pipeline. If the sentence formed by the connected pipes is grammatically correct, the player can open the faucet on the left side of the answer area, and the water flows through successfully. If the grammar is wrong, the water overflows.<br>
 Answer area: Depending on the question, the answer area is a grid of 5×5 or larger. Both the left and right sides of the answer area have connection ports.<br>
 Time limit: At the bottom of the screen, a pipe connects to the faucet in the upper left. Water slowly accumulates from the start of the level, representing the time limit. If the pipe fills up before the player opens the faucet, the player also loses the game.<br>
-
 <b>[Output Format]</b> Provide the complete code in a single HTML code block, including the styling and interaction logic.
         </div>
         <button class="btn-copper" id="btn-close-credits">BACK TO MENU</button>
       </div>
     </div>
 
-    <!-- 結果結算視窗 -->
+    <!-- RESULT MODAL -->
     <div id="modal-result" class="modal-overlay hidden">
       <div class="modal-box-large" style="width: 480px; height: auto; padding: 20px; text-align: center;">
         <div class="result-status" id="result-title">EVALUATION</div>
@@ -1099,13 +1528,16 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
 
   <script>
     /* =========================================================================
-       1. 題庫資料
+       1. QUESTION BANKS (Classic 5x5 + Independent Baby Mode 3x3)
        ========================================================================= */
+    const CLASSIC_STORAGE_KEY = "plumber_bank_cloze_v8";
+    const BABY_STORAGE_KEY = "plumber_bank_baby_v1";
+
     const DEFAULT_QUESTION_BANK = [
       {
         id: "q1",
         category: "Habitual Tense",
-        hint: "Context: 彼女は毎朝コーヒーを飲みます。",
+        hint: "Clue: Daily coffee routine (3rd person singular)",
         rawSentence: "She [drinks] coffee [every] single morning",
         distractors: ["drink", "coffees"],
         exitSide: "bottom",
@@ -1114,7 +1546,7 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
       {
         id: "q2",
         category: "Phrasal Verbs",
-        hint: "Context: 彼は去年の冬にタバコをやめました。(give up)",
+        hint: "Clue: Quit a habit in the past (phrasal verb)",
         rawSentence: "He [gave] [up] smoking last winter",
         distractors: ["give", "smoke"],
         exitSide: "bottom",
@@ -1123,7 +1555,7 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
       {
         id: "q3",
         category: "Present Perfect",
-        hint: "Context: 私たちはここにもう10年住んでいます。",
+        hint: "Clue: Living in the same place for a duration",
         rawSentence: "We [have] lived here [for] ten years",
         distractors: ["has", "living"],
         exitSide: "top",
@@ -1132,7 +1564,7 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
       {
         id: "q4",
         category: "Zero Conditional",
-        hint: "Context: 氷を熱すると、溶けます。",
+        hint: "Clue: Scientific fact when warming frozen water",
         rawSentence: "If you [heat] ice it [melts]",
         distractors: ["heated", "melt"],
         exitSide: "bottom",
@@ -1141,7 +1573,7 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
       {
         id: "q5",
         category: "Passive Voice",
-        hint: "Context: この古い橋はローマ時代に建てられました。",
+        hint: "Clue: Ancient construction in the past (passive)",
         rawSentence: "The ancient bridge [was] [built] in Roman times",
         distractors: ["is", "build"],
         exitSide: "right",
@@ -1150,7 +1582,7 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
       {
         id: "q6",
         category: "Relative Clause",
-        hint: "Context: 私は流暢なフランス語を話す女の子に出会いました。",
+        hint: "Clue: Describing a person who speaks a language",
         rawSentence: "I met a girl [who] [speaks] fluent French",
         distractors: ["whom", "speak"],
         exitSide: "top",
@@ -1159,7 +1591,7 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
       {
         id: "q7",
         category: "Business English",
-        hint: "Context: 私たちは、お会いできることを楽しみにしております。",
+        hint: "Clue: Polite phrase for anticipating a meeting",
         rawSentence: "We look forward [to] [meeting] with you",
         distractors: ["meet", "looks"],
         exitSide: "right",
@@ -1168,7 +1600,7 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
       {
         id: "q8",
         category: "Future Intent",
-        hint: "Context: 彼女はカナダへ留学するつもりです。",
+        hint: "Clue: Planned future study abroad",
         rawSentence: "She [is] [going] to study in Canada",
         distractors: ["are", "studies"],
         exitSide: "bottom",
@@ -1176,7 +1608,93 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
       }
     ];
 
-    let questionBank = JSON.parse(localStorage.getItem("plumber_bank_cloze_v7")) || DEFAULT_QUESTION_BANK;
+    const BABY_PATH_PRESETS = {
+      p3_right:        { len: 3, guidePath: [[1,0],[1,1],[1,2]],             exitSide: "right",  exitIndex: 1 },
+      p3_bottom:       { len: 3, guidePath: [[1,0],[2,0],[2,1]],             exitSide: "bottom", exitIndex: 1 },
+      p3_top:          { len: 3, guidePath: [[1,0],[0,0],[0,1]],             exitSide: "top",    exitIndex: 1 },
+      p4_top_right:    { len: 4, guidePath: [[1,0],[1,1],[1,2],[0,2]],       exitSide: "top",    exitIndex: 2 },
+      p4_right_top:    { len: 4, guidePath: [[1,0],[1,1],[0,1],[0,2]],       exitSide: "right",  exitIndex: 0 },
+      p4_bottom_right: { len: 4, guidePath: [[1,0],[2,0],[2,1],[2,2]],       exitSide: "bottom", exitIndex: 2 },
+      p4_right_bottom: { len: 4, guidePath: [[1,0],[1,1],[2,1],[2,2]],       exitSide: "right",  exitIndex: 2 },
+      p5_loop_up:      { len: 5, guidePath: [[1,0],[0,0],[0,1],[1,1],[1,2]], exitSide: "right",  exitIndex: 1 },
+      p5_loop_down:    { len: 5, guidePath: [[1,0],[2,0],[2,1],[2,2],[1,2]], exitSide: "right",  exitIndex: 1 }
+    };
+
+    const DEFAULT_BABY_QUESTION_BANK = [
+      {
+        id: "b1",
+        category: "123 COUNT",
+        hint: "Count 1, 2, 3 to fill Duckie's bath!",
+        promptDisplay: "🔢 1 ➔ 2 ➔ 3",
+        speechPrompt: "Count 1, 2, 3!",
+        tokens: ["1", "2", "3"],
+        guidePath: [[1, 0], [1, 1], [1, 2]],
+        exitSide: "right",
+        exitIndex: 1
+      },
+      {
+        id: "b2",
+        category: "PHONICS 🐱",
+        hint: "Spell the cute kitty: C - A - T!",
+        promptDisplay: "🐱 C - A - T",
+        speechPrompt: "Let's spell cat! C, A, T!",
+        tokens: ["C", "A", "T"],
+        guidePath: [[1, 0], [1, 1], [1, 2]],
+        exitSide: "right",
+        exitIndex: 1
+      },
+      {
+        id: "b3",
+        category: "NATURE 🌱",
+        hint: "How does a little flower grow?",
+        promptDisplay: "🌧️ rain ➔ 🌱 seed ➔ 🌸 flower",
+        speechPrompt: "Rain, seed, flower!",
+        tokens: ["🌧️ rain", "🌱 seed", "🌸 flower"],
+        guidePath: [[1, 0], [1, 1], [1, 2]],
+        exitSide: "right",
+        exitIndex: 1
+      },
+      {
+        id: "b4",
+        category: "ABC TRAIN",
+        hint: "Turn the corner! Send A B C D to the tub!",
+        promptDisplay: "🔤 A ➔ B ➔ C ➔ D",
+        speechPrompt: "A, B, C, D!",
+        tokens: ["A", "B", "C", "D"],
+        guidePath: [[1, 0], [1, 1], [1, 2], [0, 2]],
+        exitSide: "top",
+        exitIndex: 2
+      },
+      {
+        id: "b5",
+        category: "PHONICS 🐟",
+        hint: "Spell the swimming FISH!",
+        promptDisplay: "🐟 F - I - S - H",
+        speechPrompt: "Let's spell fish! F, I, S, H!",
+        tokens: ["F", "I", "S", "H"],
+        guidePath: [[1, 0], [1, 1], [0, 1], [0, 2]],
+        exitSide: "right",
+        exitIndex: 0
+      },
+      {
+        id: "b6",
+        category: "MY PUPPY 🐶",
+        hint: "Build the sentence: I see a dog!",
+        promptDisplay: "👀 I see a 🐶 dog",
+        speechPrompt: "I see a dog!",
+        tokens: ["I", "see", "a", "🐶 dog"],
+        guidePath: [[1, 0], [2, 0], [2, 1], [2, 2]],
+        exitSide: "bottom",
+        exitIndex: 2
+      }
+    ];
+
+    function clonePresets(arr) {
+      return JSON.parse(JSON.stringify(arr));
+    }
+
+    let questionBank = JSON.parse(localStorage.getItem(CLASSIC_STORAGE_KEY)) || clonePresets(DEFAULT_QUESTION_BANK);
+    let babyQuestionBank = JSON.parse(localStorage.getItem(BABY_STORAGE_KEY)) || clonePresets(DEFAULT_BABY_QUESTION_BANK);
 
     function parseClozeData(rawSentence) {
       const tokens = rawSentence.trim().split(/\s+/).filter(Boolean);
@@ -1203,9 +1721,27 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
     }
 
     /* =========================================================================
-       2. 音效引擎
+       2. AUDIO & SPEECH SYNTHESIS ENGINE
        ========================================================================= */
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    let isVoiceEnabled = true;
+
+    function stripEmojisForSpeech(text) {
+      return text.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu, '').trim();
+    }
+
+    function speakText(rawText, rate = 0.88) {
+      if (!isVoiceEnabled || !('speechSynthesis' in window)) return;
+      const clean = stripEmojisForSpeech(String(rawText));
+      if (!clean) return;
+
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(clean);
+      utter.lang = 'en-US';
+      utter.rate = rate;
+      utter.pitch = 1.15;
+      window.speechSynthesis.speak(utter);
+    }
 
     function playSound(type) {
       if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -1217,7 +1753,7 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(145, now);
         osc.frequency.exponentialRampToValueAtTime(45, now + 0.2);
-        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.setValueAtTime(0.3, now);
         gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
@@ -1235,7 +1771,7 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
         filter.frequency.setValueAtTime(450, now);
         filter.Q.setValueAtTime(3.0, now);
         const gain = audioCtx.createGain();
-        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.setValueAtTime(0.22, now);
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
         noise.connect(filter);
         filter.connect(gain);
@@ -1247,12 +1783,24 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
         osc.type = 'square';
         osc.frequency.setValueAtTime(105, now);
         osc.frequency.linearRampToValueAtTime(25, now + 0.4);
-        gain.gain.setValueAtTime(0.45, now);
+        gain.gain.setValueAtTime(0.35, now);
         gain.gain.linearRampToValueAtTime(0.01, now + 0.4);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start(now);
         osc.stop(now + 0.4);
+      } else if (type === 'splash') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(520, now);
+        osc.frequency.exponentialRampToValueAtTime(220, now + 0.25);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.25);
       } else if (type === 'win') {
         [261.63, 329.63, 392.00, 523.25].forEach((freq, idx) => {
           const osc = audioCtx.createOscillator();
@@ -1269,7 +1817,7 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
     }
 
     /* =========================================================================
-       3. 放大版 76px 空心水管與真實水龍頭 SVG
+       3. PIPE & FAUCET SVG RENDERERS
        ========================================================================= */
     const PIPE_TYPES = {
       straight: { name: 'straight', baseConnect: [false, true, false, true] },
@@ -1284,37 +1832,34 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
       return { top: res[0], right: res[1], bottom: res[2], left: res[3] };
     }
 
-    // 適配 76px 大方格尺寸的 SVG 渲染
     function renderPipeSVG(type, rotation, isActive = false) {
       let shell = '';
       let water = '';
 
       if (type === 'straight') {
         shell = `
-          <!-- 放大外管身 (中心位於 Y=38) -->
-          <rect x="0" y="24" width="76" height="28" fill="#3b4b5e" stroke="#1e293b" stroke-width="2"/>
-          <rect x="0" y="21" width="6" height="34" fill="#f59e0b" stroke="#78350f" stroke-width="1"/>
-          <rect x="70" y="21" width="6" height="34" fill="#f59e0b" stroke="#78350f" stroke-width="1"/>
-          <rect x="0" y="29" width="76" height="18" fill="#06090e"/>
+          <rect x="0" y="24" width="76" height="28" fill="var(--pipe-shell)" stroke="var(--pipe-stroke)" stroke-width="2"/>
+          <rect x="0" y="21" width="6" height="34" fill="var(--pipe-flange)" stroke="var(--pipe-flange-stroke)" stroke-width="1"/>
+          <rect x="70" y="21" width="6" height="34" fill="var(--pipe-flange)" stroke="var(--pipe-flange-stroke)" stroke-width="1"/>
+          <rect x="0" y="29" width="76" height="18" fill="var(--pipe-inner)"/>
         `;
         if (isActive) {
           water = `
-            <line x1="0" y1="38" x2="76" y2="38" stroke="#38bdf8" stroke-width="12" stroke-linecap="round"
-                  style="filter: drop-shadow(0 0 6px #0284c7);"/>
+            <line x1="0" y1="38" x2="76" y2="38" stroke="var(--pipe-water)" stroke-width="12" stroke-linecap="round"
+                  style="filter: drop-shadow(0 0 6px var(--pipe-water-glow));"/>
           `;
         }
       } else if (type === 'corner') {
         shell = `
-          <!-- 彎角外管身 (中心轉角 (38, 38)) -->
-          <path d="M 38 0 L 38 38 L 76 38" fill="none" stroke="#3b4b5e" stroke-width="28" stroke-linecap="square"/>
-          <rect x="24" y="0" width="28" height="6" fill="#f59e0b" stroke="#78350f" stroke-width="1"/>
-          <rect x="70" y="24" width="6" height="28" fill="#f59e0b" stroke="#78350f" stroke-width="1"/>
-          <path d="M 38 0 L 38 38 L 76 38" fill="none" stroke="#06090e" stroke-width="16" stroke-linecap="square"/>
+          <path d="M 38 0 L 38 38 L 76 38" fill="none" stroke="var(--pipe-shell)" stroke-width="28" stroke-linecap="square"/>
+          <rect x="24" y="0" width="28" height="6" fill="var(--pipe-flange)" stroke="var(--pipe-flange-stroke)" stroke-width="1"/>
+          <rect x="70" y="24" width="6" height="28" fill="var(--pipe-flange)" stroke="var(--pipe-flange-stroke)" stroke-width="1"/>
+          <path d="M 38 0 L 38 38 L 76 38" fill="none" stroke="var(--pipe-inner)" stroke-width="16" stroke-linecap="square"/>
         `;
         if (isActive) {
           water = `
-            <path d="M 38 0 L 38 38 L 76 38" fill="none" stroke="#38bdf8" stroke-width="12" stroke-linecap="round"
-                  style="filter: drop-shadow(0 0 6px #0284c7);"/>
+            <path d="M 38 0 L 38 38 L 76 38" fill="none" stroke="var(--pipe-water)" stroke-width="12" stroke-linecap="round"
+                  style="filter: drop-shadow(0 0 6px var(--pipe-water-glow));"/>
           `;
         }
       }
@@ -1365,9 +1910,10 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
     }
 
     /* =========================================================================
-       4. 拓撲與狀態控制（支援計時開關）
+       4. GAME STATE & TOPOLOGY
        ========================================================================= */
-    const GRID_SIZE = 5;
+    let GRID_SIZE = 5;
+    let isBabyMode = false;
     const INVENTORY_CAPACITY = 6;
     const TOTAL_PIPE_STROKE = 240;
 
@@ -1375,18 +1921,18 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
     let currentExit = { side: 'bottom', index: 3 };
 
     let currentLevelIdx = 0;
-    let gridData = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(null));
+    let gridData = [];
     let inventoryData = [];
     let selectedInvId = null;
 
     let activeCorrectWords = [];
+    let currentBabyGuidePath = [];
+    let currentSpeechPrompt = "";
     let timeRemaining = 0;
     let maxTimeLimit = 60;
     let timerInterval = null;
     let isFlowing = false;
     let isPaused = false;
-
-    // ★ 計時模式開關變數 (預設開啟)
     let isTimerEnabled = true;
 
     function resolveExitConfig(correctWords, exitSideReq) {
@@ -1397,6 +1943,39 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
       if (sideReq === 'top') return { side: 'top', index: isOdd ? 4 : 3 };
       if (sideReq === 'bottom') return { side: 'bottom', index: isOdd ? 2 : 3 };
       return isOdd ? { side: 'right', index: 2 } : { side: 'bottom', index: 3 };
+    }
+
+    function deriveBabyPipeTypes(guidePath, exitSide) {
+      const types = [];
+      for (let i = 0; i < guidePath.length; i++) {
+        const [r, c] = guidePath[i];
+        let inDir = 'left';
+        if (i > 0) {
+          const [pr, pc] = guidePath[i - 1];
+          if (pr < r) inDir = 'top';
+          else if (pr > r) inDir = 'bottom';
+          else if (pc < c) inDir = 'left';
+          else if (pc > c) inDir = 'right';
+        }
+
+        let outDir = exitSide;
+        if (i < guidePath.length - 1) {
+          const [nr, nc] = guidePath[i + 1];
+          if (nr < r) outDir = 'top';
+          else if (nr > r) outDir = 'bottom';
+          else if (nc < c) outDir = 'left';
+          else if (nc > c) outDir = 'right';
+        }
+
+        const isStraight =
+          (inDir === 'left' && outDir === 'right') ||
+          (inDir === 'right' && outDir === 'left') ||
+          (inDir === 'top' && outDir === 'bottom') ||
+          (inDir === 'bottom' && outDir === 'top');
+
+        types.push(isStraight ? 'straight' : 'corner');
+      }
+      return types;
     }
 
     function createPipeItem() {
@@ -1430,75 +2009,181 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
     }
 
     /* =========================================================================
-       5. 關卡初始化與畫面配置
+       5. LEVEL INITIALIZATION & BOARD RENDERING
        ========================================================================= */
+    function applyModeAppearance() {
+      const app = document.getElementById('app-container');
+      const timerBtn = document.getElementById('btn-toggle-timer');
+      const rerollBtn = document.getElementById('btn-reroll-all');
+      const classicGauge = document.getElementById('classic-gauge-box');
+      const babyGauge = document.getElementById('baby-gauge-box');
+      const invTitle = document.getElementById('inventory-title');
+      const invTip = document.getElementById('inventory-controls-tip');
+
+      if (isBabyMode) {
+        GRID_SIZE = 3;
+        app.classList.add('baby-mode');
+        document.body.classList.add('baby-body-bg');
+        timerBtn.classList.add('hidden');
+        rerollBtn.classList.add('hidden');
+        classicGauge.classList.add('hidden');
+        babyGauge.classList.remove('hidden');
+        invTitle.textContent = "🐣 TOY PIPES";
+        invTip.innerHTML = `
+          🌈 <b>How to Play</b>:<br>
+          1. Tap a pipe to hear it, then tap a yellow box.<br>
+          2. Tap a placed pipe to turn it; tap <b>↩</b> to put it back.<br>
+          3. When all pipes are placed, tap the <b>red faucet</b>!
+        `;
+      } else {
+        GRID_SIZE = 5;
+        app.classList.remove('baby-mode');
+        document.body.classList.remove('baby-body-bg');
+        timerBtn.classList.remove('hidden');
+        rerollBtn.classList.remove('hidden');
+        classicGauge.classList.remove('hidden');
+        babyGauge.classList.add('hidden');
+        invTitle.textContent = "PIPE INVENTORY";
+        invTip.innerHTML = `
+          💡 <b>Controls</b>:<br>
+          • <b>Timer Mode</b>: Toggle ON/OFF in header anytime.<br>
+          • <b>Rotate</b>: Left-click placed pipe to turn 90°.<br>
+          • <b>Recycle</b>: Right-click placed pipe to retrieve; right-click in inventory to scrap.
+        `;
+      }
+    }
+
     function startLevel(idx) {
-      currentLevelIdx = idx % questionBank.length;
-      const level = questionBank[currentLevelIdx];
+      applyModeAppearance();
 
-      const parsed = parseClozeData(level.rawSentence);
-      activeCorrectWords = parsed.correctWords;
+      const bank = isBabyMode ? babyQuestionBank : questionBank;
+      if (!bank || bank.length === 0) {
+        alert("No levels found in this bank! Restoring defaults.");
+        if (isBabyMode) babyQuestionBank = clonePresets(DEFAULT_BABY_QUESTION_BANK);
+        else questionBank = clonePresets(DEFAULT_QUESTION_BANK);
+      }
 
-      entryRow = 2;
-      currentExit = resolveExitConfig(activeCorrectWords, level.exitSide);
+      const activeBank = isBabyMode ? babyQuestionBank : questionBank;
+      currentLevelIdx = idx % activeBank.length;
+      const level = activeBank[currentLevelIdx];
 
       gridData = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(null));
       selectedInvId = null;
       isFlowing = false;
       isPaused = false;
-
       inventoryData = [];
-      for (let i = 0; i < INVENTORY_CAPACITY; i++) {
-        inventoryData.push(createPipeItem());
+
+      if (isBabyMode) {
+        entryRow = 1;
+        activeCorrectWords = [...level.tokens];
+        currentBabyGuidePath = level.guidePath || BABY_PATH_PRESETS.p3_right.guidePath;
+        currentExit = { side: level.exitSide || 'right', index: level.exitIndex ?? 1 };
+        currentSpeechPrompt = level.speechPrompt || level.tokens.join(", ");
+
+        const requiredTypes = deriveBabyPipeTypes(currentBabyGuidePath, currentExit.side);
+        const items = level.tokens.map((tok, i) => ({
+          id: 'bp_' + i + '_' + Math.random().toString(36).substring(2, 6),
+          word: tok,
+          type: requiredTypes[i] || 'straight',
+          rotation: (requiredTypes[i] === 'straight')
+            ? [0, 90][Math.floor(Math.random() * 2)]
+            : [0, 90, 180, 270][Math.floor(Math.random() * 4)],
+          isWaterFilled: false
+        }));
+        for (let i = items.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [items[i], items[j]] = [items[j], items[i]];
+        }
+        inventoryData = items;
+
+        document.getElementById('mission-tag').textContent = `🐣 LEVEL ${currentLevelIdx + 1}/${activeBank.length} • ${level.category}`;
+        document.getElementById('target-sentence-hint').textContent = level.hint || '';
+        document.getElementById('cloze-sentence-display').innerHTML = `
+          <span>${level.promptDisplay || level.tokens.join(" ➔ ")}</span>
+          <button class="btn-speak-prompt" id="btn-replay-prompt" title="Hear prompt again">🔊 HEAR IT</button>
+        `;
+        document.getElementById('btn-replay-prompt').addEventListener('click', () => {
+          speakText(currentSpeechPrompt);
+        });
+
+        clearInterval(timerInterval);
+        isTimerEnabled = false;
+        startPressureTimer();
+        setTimeout(() => speakText(currentSpeechPrompt), 250);
+      } else {
+        const parsed = parseClozeData(level.rawSentence);
+        activeCorrectWords = parsed.correctWords;
+        currentBabyGuidePath = [];
+        currentSpeechPrompt = parsed.correctWords.join(" ");
+
+        entryRow = 2;
+        currentExit = resolveExitConfig(activeCorrectWords, level.exitSide);
+
+        for (let i = 0; i < INVENTORY_CAPACITY; i++) {
+          inventoryData.push(createPipeItem());
+        }
+
+        document.getElementById('mission-tag').textContent = level.category || 'CLOZE TEST';
+        document.getElementById('target-sentence-hint').textContent = level.hint || '';
+        document.getElementById('cloze-sentence-display').innerHTML = parsed.clozeHtml;
+
+        maxTimeLimit = level.timeLimit || 60;
+        timeRemaining = maxTimeLimit;
+        clearInterval(timerInterval);
+        startPressureTimer();
       }
-
-      document.getElementById('mission-tag').textContent = level.category || 'CLOZE TEST';
-      document.getElementById('target-sentence-hint').textContent = level.hint || '';
-      document.getElementById('cloze-sentence-display').innerHTML = parsed.clozeHtml;
-
-      maxTimeLimit = level.timeLimit || 60;
-      timeRemaining = maxTimeLimit;
-      clearInterval(timerInterval);
-      startPressureTimer();
 
       renderAllStages();
       renderInventory();
     }
 
+    function renderExitPortHTML(side) {
+      if (isBabyMode) {
+        return `
+          <div class="duck-pond-tank ${side}" id="baby-duck-tank">
+            <span class="duck-icon">🦆</span>
+            <span class="duck-label">BATH!</span>
+          </div>
+        `;
+      }
+      if (side === 'top') return `<div class="output-tank top">▲ OUT</div>`;
+      if (side === 'bottom') return `<div class="output-tank bottom">▼ OUT</div>`;
+      return `<div class="output-tank right">OUT ▶</div>`;
+    }
+
     function renderAllStages() {
-      // 1. 頂部出水排
       const topRow = document.getElementById('top-io-row');
       topRow.innerHTML = '';
       for (let c = 0; c < GRID_SIZE; c++) {
         const slot = document.createElement('div');
         slot.className = 'io-port-cell';
         if (currentExit.side === 'top' && currentExit.index === c) {
-          slot.innerHTML = `<div class="output-tank top">▲ OUT</div>`;
+          slot.innerHTML = renderExitPortHTML('top');
         }
         topRow.appendChild(slot);
       }
 
-      // 2. 底部出水排
       const btmRow = document.getElementById('bottom-io-row');
       btmRow.innerHTML = '';
       for (let c = 0; c < GRID_SIZE; c++) {
         const slot = document.createElement('div');
         slot.className = 'io-port-cell';
         if (currentExit.side === 'bottom' && currentExit.index === c) {
-          slot.innerHTML = `<div class="output-tank bottom">▼ OUT</div>`;
+          slot.innerHTML = renderExitPortHTML('bottom');
         }
         btmRow.appendChild(slot);
       }
 
-      // 3. 左側水龍頭排
       const leftCol = document.getElementById('left-io-col');
       leftCol.innerHTML = '';
       for (let r = 0; r < GRID_SIZE; r++) {
         const slot = document.createElement('div');
         slot.className = 'io-port-cell';
         if (r === entryRow) {
+          const allPlacedInBaby = isBabyMode && inventoryData.length === 0;
           slot.innerHTML = `
-            <div class="realistic-faucet-box" id="faucet-clicker" title="Click valve to test flow!">
+            <div class="realistic-faucet-box ${allPlacedInBaby ? 'faucet-ready-pulse' : ''}" id="faucet-clicker" title="Click valve to test flow!">
+              ${allPlacedInBaby ? '<div class="faucet-tap-hint">💦 TAP ME!</div>' : ''}
               ${getRealisticFaucetSVG()}
             </div>
           `;
@@ -1506,14 +2191,13 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
         leftCol.appendChild(slot);
       }
 
-      // 4. 右側出水排
       const rightCol = document.getElementById('right-io-col');
       rightCol.innerHTML = '';
       for (let r = 0; r < GRID_SIZE; r++) {
         const slot = document.createElement('div');
         slot.className = 'io-port-cell';
         if (currentExit.side === 'right' && currentExit.index === r) {
-          slot.innerHTML = `<div class="output-tank right">OUT ▶</div>`;
+          slot.innerHTML = renderExitPortHTML('right');
         }
         rightCol.appendChild(slot);
       }
@@ -1524,14 +2208,31 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
       renderGrid();
     }
 
-    // 水壓計時器（依據 isTimerEnabled 決定是否倒數）
+    function updateFaucetHintState() {
+      if (!isBabyMode) return;
+      const faucetBox = document.getElementById('faucet-clicker');
+      if (!faucetBox) return;
+      const existingHint = faucetBox.querySelector('.faucet-tap-hint');
+      if (inventoryData.length === 0) {
+        faucetBox.classList.add('faucet-ready-pulse');
+        if (!existingHint) {
+          const badge = document.createElement('div');
+          badge.className = 'faucet-tap-hint';
+          badge.textContent = '💦 TAP ME!';
+          faucetBox.prepend(badge);
+        }
+      } else {
+        faucetBox.classList.remove('faucet-ready-pulse');
+        if (existingHint) existingHint.remove();
+      }
+    }
+
     function startPressureTimer() {
       const waterPath = document.getElementById('supply-water-path');
       const timerText = document.getElementById('timer-text');
       const needle = document.getElementById('gauge-needle');
 
-      // 若計時模式關閉（禪意模式）
-      if (!isTimerEnabled) {
+      if (!isTimerEnabled || isBabyMode) {
         if (needle) {
           needle.style.transform = `rotate(-120deg)`;
           needle.classList.remove('critical');
@@ -1568,8 +2269,12 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
     }
 
     /* =========================================================================
-       6. 網格與醒目庫存互動（完全展示單字）
+       6. GRID & INVENTORY INTERACTION
        ========================================================================= */
+    function isGuideCell(r, c) {
+      return currentBabyGuidePath.some(([gr, gc]) => gr === r && gc === c);
+    }
+
     function renderGrid() {
       const gridEl = document.getElementById('grid');
       gridEl.innerHTML = '';
@@ -1577,7 +2282,8 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
       for (let r = 0; r < GRID_SIZE; r++) {
         for (let c = 0; c < GRID_SIZE; c++) {
           const cell = document.createElement('div');
-          cell.className = 'grid-cell';
+          const guide = isBabyMode && isGuideCell(r, c);
+          cell.className = `grid-cell ${guide ? 'baby-guide-cell' : ''}`;
           cell.dataset.row = r;
           cell.dataset.col = c;
 
@@ -1590,7 +2296,20 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
               ${renderPipeSVG(item.type, item.rotation, item.isWaterFilled)}
               <div class="word-badge ${isLong}">${item.word}</div>
             `;
+            if (isBabyMode) {
+              const retBtn = document.createElement('button');
+              retBtn.className = 'cell-return-btn';
+              retBtn.title = 'Return pipe';
+              retBtn.textContent = '↩';
+              retBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                handleCellRightClick(r, c);
+              });
+              piece.appendChild(retBtn);
+            }
             cell.appendChild(piece);
+          } else if (guide) {
+            cell.innerHTML = `<span class="guide-drop-hint">💧</span>`;
           }
 
           cell.addEventListener('click', () => handleCellClick(r, c));
@@ -1602,11 +2321,21 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
           gridEl.appendChild(cell);
         }
       }
+      updateFaucetHintState();
     }
 
     function renderInventory() {
       const invList = document.getElementById('inventory-list');
       invList.innerHTML = '';
+
+      if (isBabyMode && inventoryData.length === 0) {
+        invList.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align:center; padding: 24px 8px; color:#db2777; font-weight:800; font-size:0.95rem;">
+            ✨ All pipes placed!<br>Tap the <span style="color:#ef4444;">red faucet</span> to turn on the water!
+          </div>
+        `;
+        return;
+      }
 
       inventoryData.forEach((item, index) => {
         const div = document.createElement('div');
@@ -1620,12 +2349,13 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
         div.addEventListener('click', () => {
           if (isPaused || isFlowing) return;
           selectedInvId = (selectedInvId === item.id) ? null : item.id;
+          if (selectedInvId) speakText(item.word);
           renderInventory();
         });
 
         div.addEventListener('contextmenu', (e) => {
           e.preventDefault();
-          if (isPaused || isFlowing) return;
+          if (isPaused || isFlowing || isBabyMode) return;
           inventoryData[index] = createPipeItem();
           if (selectedInvId === item.id) selectedInvId = null;
           playSound('valve');
@@ -1646,8 +2376,14 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
       } else if (selectedInvId) {
         const invIdx = inventoryData.findIndex(i => i.id === selectedInvId);
         if (invIdx !== -1) {
-          gridData[r][c] = inventoryData[invIdx];
-          inventoryData[invIdx] = createPipeItem();
+          const placed = inventoryData[invIdx];
+          gridData[r][c] = placed;
+          if (isBabyMode) {
+            inventoryData.splice(invIdx, 1);
+            speakText(placed.word);
+          } else {
+            inventoryData[invIdx] = createPipeItem();
+          }
           selectedInvId = null;
           playSound('flow');
           renderGrid();
@@ -1660,9 +2396,14 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
       if (isFlowing || isPaused) return;
       if (gridData[r][c]) {
         const item = gridData[r][c];
+        item.isWaterFilled = false;
         gridData[r][c] = null;
-        inventoryData.pop();
-        inventoryData.unshift(item);
+        if (isBabyMode) {
+          inventoryData.push(item);
+        } else {
+          inventoryData.pop();
+          inventoryData.unshift(item);
+        }
         playSound('valve');
         renderGrid();
         renderInventory();
@@ -1670,7 +2411,7 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
     }
 
     document.getElementById('btn-reroll-all').addEventListener('click', () => {
-      if (isFlowing || isPaused) return;
+      if (isFlowing || isPaused || isBabyMode) return;
       inventoryData = [];
       for (let i = 0; i < INVENTORY_CAPACITY; i++) inventoryData.push(createPipeItem());
       selectedInvId = null;
@@ -1679,7 +2420,7 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
     });
 
     /* =========================================================================
-       7. 閥門通水與流動驗證
+       7. FAUCET WATER FLOW & VALIDATION
        ========================================================================= */
     function turnFaucet() {
       if (isFlowing || isPaused) return;
@@ -1714,13 +2455,13 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
       while (currR >= 0 && currR < GRID_SIZE && currC >= 0 && currC < GRID_SIZE) {
         const pipe = gridData[currR][currC];
         if (!pipe) {
-          burstPoint = { r: currR, c: currC, reason: 'Disconnected empty slot' };
+          burstPoint = { r: currR, c: currC, reason: isBabyMode ? 'This spot still needs a pipe!' : 'Disconnected empty slot' };
           break;
         }
 
         const openings = getRotatedOpenings(pipe.type, pipe.rotation);
         if (!openings[enterFrom]) {
-          burstPoint = { r: currR, c: currC, reason: 'Misaligned entry port' };
+          burstPoint = { r: currR, c: currC, reason: isBabyMode ? 'Tap this pipe to turn it the right way!' : 'Misaligned entry port' };
           break;
         }
 
@@ -1728,8 +2469,9 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
         wordsCollected.push(pipe.word);
         renderGrid();
         playSound('flow');
+        if (isBabyMode) speakText(pipe.word, 0.95);
 
-        await new Promise(res => setTimeout(res, 220));
+        await new Promise(res => setTimeout(res, isBabyMode ? 550 : 220));
 
         let exitTo = null;
         for (let dir of ['top', 'right', 'bottom', 'left']) {
@@ -1740,7 +2482,7 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
         }
 
         if (!exitTo) {
-          burstPoint = { r: currR, c: currC, reason: 'Dead-end terminal pipe' };
+          burstPoint = { r: currR, c: currC, reason: isBabyMode ? 'This pipe end is blocked!' : 'Dead-end terminal pipe' };
           break;
         }
 
@@ -1765,16 +2507,37 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
         if (formedSentence === correctSentence) {
           playSound('win');
           clearInterval(timerInterval);
-          showResultModal(true, `Waterway flushed clean! Cloze test solved:\n"${formedSentence}"`);
+          if (isBabyMode) {
+            const duckTank = document.getElementById('baby-duck-tank');
+            if (duckTank) duckTank.classList.add('duck-happy');
+            setTimeout(() => speakText("Yay! Good job!"), 350);
+            await new Promise(res => setTimeout(res, 750));
+            showResultModal(true, `Rubber Duck got a bubbly bath!\n✨ "${formedSentence}" ✨`);
+          } else {
+            showResultModal(true, `Waterway flushed clean! Cloze test solved:\n"${formedSentence}"`);
+          }
         } else {
-          playSound('burst');
-          triggerBurstAtExit();
-          showResultModal(false, `Pipes connected, but syntax failed!\nBuilt: "${formedSentence}"\nTarget: "${correctSentence}"\nBack-pressure ruptured the joint!`);
+          if (isBabyMode) {
+            playSound('splash');
+            speakText("Oops! Let's check the order!");
+            showResultModal(false, `The water reached Duckie, but the order is mixed up!\nYou built: "${formedSentence}"\nTry making: "${correctSentence}"`);
+          } else {
+            playSound('burst');
+            triggerBurstAtExit();
+            showResultModal(false, `Pipes connected, but syntax failed!\nBuilt: "${formedSentence}"\nTarget: "${correctSentence}"\nBack-pressure ruptured the joint!`);
+          }
         }
       } else {
-        playSound('burst');
-        if (burstPoint) triggerBurst(burstPoint.r, burstPoint.c);
-        showResultModal(false, `Water stream escaped before reaching the designated exit!\nReason: ${burstPoint ? burstPoint.reason : 'Out of bounds'}.`);
+        if (isBabyMode) {
+          playSound('splash');
+          if (burstPoint) triggerBurst(burstPoint.r, burstPoint.c);
+          speakText("Oops! Water splashed!");
+          showResultModal(false, `Water splashed out at the glowing spot!\nTip: ${burstPoint ? burstPoint.reason : 'Check the direction of your pipes!'}`);
+        } else {
+          playSound('burst');
+          if (burstPoint) triggerBurst(burstPoint.r, burstPoint.c);
+          showResultModal(false, `Water stream escaped before reaching the designated exit!\nReason: ${burstPoint ? burstPoint.reason : 'Out of bounds'}.`);
+        }
       }
 
       isFlowing = false;
@@ -1784,7 +2547,7 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
       const cell = document.querySelector(`.grid-cell[data-row='${r}'][data-col='${c}']`);
       if (cell) {
         cell.classList.add('burst-leak');
-        setTimeout(() => cell.classList.remove('burst-leak'), 1800);
+        setTimeout(() => cell.classList.remove('burst-leak'), 2000);
       }
     }
 
@@ -1795,12 +2558,23 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
     }
 
     /* =========================================================================
-       8. 計時開關與暫停控制
+       8. VOICE TOGGLE, TIMER TOGGLE & PAUSE CONTROLS
        ========================================================================= */
-    const timerToggleBtn = document.getElementById('btn-toggle-timer');
+    const voiceToggleBtn = document.getElementById('btn-toggle-voice');
+    voiceToggleBtn.addEventListener('click', () => {
+      isVoiceEnabled = !isVoiceEnabled;
+      if (isVoiceEnabled) {
+        voiceToggleBtn.textContent = "🔊 VOICE: ON";
+        speakText("Voice on");
+      } else {
+        voiceToggleBtn.textContent = "🔇 VOICE: OFF";
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      }
+    });
 
-    // ★ 計時模式切換按鈕事件
+    const timerToggleBtn = document.getElementById('btn-toggle-timer');
     timerToggleBtn.addEventListener('click', () => {
+      if (isBabyMode) return;
       isTimerEnabled = !isTimerEnabled;
       if (isTimerEnabled) {
         timerToggleBtn.textContent = "⏱️ TIMER: ON";
@@ -1811,7 +2585,7 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
         timerToggleBtn.textContent = "🧘 TIMER: OFF (ZEN)";
         timerToggleBtn.classList.add('zen-mode');
         clearInterval(timerInterval);
-        startPressureTimer(); // 執行清空重設為 ZEN
+        startPressureTimer();
       }
     });
 
@@ -1835,12 +2609,20 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
       startLevel(currentLevelIdx);
     });
 
-    document.getElementById('btn-pause-quit').addEventListener('click', () => {
+    function exitToMainMenu() {
       setPauseState(false);
       clearInterval(timerInterval);
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      isBabyMode = false;
+      GRID_SIZE = 5;
+      document.getElementById('app-container').classList.remove('baby-mode');
+      document.body.classList.remove('baby-body-bg');
       document.getElementById('game-screen').classList.add('hidden');
       document.getElementById('start-screen').classList.remove('hidden');
-    });
+    }
+
+    document.getElementById('btn-pause-quit').addEventListener('click', exitToMainMenu);
+    document.getElementById('btn-back-menu').addEventListener('click', exitToMainMenu);
 
     window.addEventListener('keydown', (e) => {
       if ((e.key === 'p' || e.key === 'P') && !document.getElementById('game-screen').classList.contains('hidden')) {
@@ -1849,7 +2631,7 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
     });
 
     /* =========================================================================
-       9. 題庫自製管理介面
+       9. CUSTOM LEVEL BUILDER (Classic 5x5 + Independent Baby 3x3 Bank)
        ========================================================================= */
     const modalBank = document.getElementById('modal-bank');
     const tabListBtn = document.getElementById('tab-btn-list');
@@ -1860,7 +2642,51 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
     const paneEdit = document.getElementById('tab-pane-edit');
     const paneJson = document.getElementById('tab-pane-json');
 
+    const switchClassicBtn = document.getElementById('switch-bank-classic');
+    const switchBabyBtn = document.getElementById('switch-bank-baby');
+
+    let activeBuilderBank = 'classic'; // 'classic' | 'baby'
+    let activeBuilderTab = 'list';     // 'list' | 'edit' | 'json'
+
+    function getActiveBuilderArray() {
+      return activeBuilderBank === 'baby' ? babyQuestionBank : questionBank;
+    }
+
+    function saveBankToStorage(which = activeBuilderBank) {
+      if (which === 'baby') {
+        localStorage.setItem(BABY_STORAGE_KEY, JSON.stringify(babyQuestionBank));
+      } else {
+        localStorage.setItem(CLASSIC_STORAGE_KEY, JSON.stringify(questionBank));
+      }
+    }
+
+    function switchBuilderBankMode(mode) {
+      activeBuilderBank = mode;
+      switchClassicBtn.className = `mode-switch-btn ${mode === 'classic' ? 'active-classic' : ''}`;
+      switchBabyBtn.className = `mode-switch-btn ${mode === 'baby' ? 'active-baby' : ''}`;
+
+      const labelText = mode === 'baby' ? 'BABY MODE (3×3)' : 'CLASSIC (5×5)';
+      document.getElementById('bank-mode-label').textContent = labelText;
+      document.getElementById('json-mode-label').textContent = labelText;
+
+      // Toggle Classic vs Baby Edit fields
+      if (mode === 'baby') {
+        document.getElementById('classic-edit-fields').classList.add('hidden');
+        document.getElementById('baby-edit-fields').classList.remove('hidden');
+      } else {
+        document.getElementById('classic-edit-fields').classList.remove('hidden');
+        document.getElementById('baby-edit-fields').classList.add('hidden');
+      }
+
+      resetBankForm();
+      switchBankTab(activeBuilderTab);
+    }
+
+    switchClassicBtn.addEventListener('click', () => switchBuilderBankMode('classic'));
+    switchBabyBtn.addEventListener('click', () => switchBuilderBankMode('baby'));
+
     function switchBankTab(tab) {
+      activeBuilderTab = tab;
       [tabListBtn, tabEditBtn, tabJsonBtn].forEach(b => b.classList.remove('active'));
       [paneList, paneEdit, paneJson].forEach(p => p.classList.add('hidden'));
 
@@ -1874,7 +2700,7 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
       } else if (tab === 'json') {
         tabJsonBtn.classList.add('active');
         paneJson.classList.remove('hidden');
-        document.getElementById('bank-json-input').value = JSON.stringify(questionBank, null, 2);
+        document.getElementById('bank-json-input').value = JSON.stringify(getActiveBuilderArray(), null, 2);
       }
     }
 
@@ -1886,36 +2712,59 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
     function renderBankListCards() {
       const container = document.getElementById('bank-cards-container');
       container.innerHTML = '';
-      document.getElementById('bank-count-text').textContent = questionBank.length;
+      const arr = getActiveBuilderArray();
+      document.getElementById('bank-count-text').textContent = arr.length;
 
-      questionBank.forEach((item, index) => {
-        const parsed = parseClozeData(item.rawSentence);
+      arr.forEach((item, index) => {
         const card = document.createElement('div');
         card.className = 'bank-item-row';
-        card.innerHTML = `
-          <div class="bank-item-info">
-            <div>
-              <span class="mission-type-tag" style="display:inline-block;">${item.category || 'CLOZE'}</span>
-              <span style="font-size:0.8rem; color:var(--text-main); margin-left:5px;">${item.hint}</span>
+
+        if (activeBuilderBank === 'baby') {
+          card.innerHTML = `
+            <div class="bank-item-info">
+              <div>
+                <span class="mission-type-tag" style="display:inline-block; background:#db2777;">${item.category || 'BABY'}</span>
+                <span style="font-size:0.8rem; color:var(--text-main); margin-left:5px;">${item.hint || ''}</span>
+              </div>
+              <div class="bank-item-sentence" style="color:#f9a8d4;">${item.promptDisplay || item.tokens.join(" ➔ ")}</div>
+              <div class="bank-item-meta">
+                Tokens (${item.tokens.length}): [${item.tokens.join("] [")}] • Exit: ${item.exitSide}
+              </div>
             </div>
-            <div class="bank-item-sentence">${item.rawSentence}</div>
-            <div class="bank-item-meta">
-              Words: ${parsed.correctWords.length} • Exit: ${item.exitSide || 'Auto'} • Time: ${item.timeLimit}s
+            <div style="display:flex; gap:5px;">
+              <button class="btn-sub" style="padding:3px 7px; font-size:0.7rem;" onclick="playDirectLevel(${index})">▶ PLAY</button>
+              <button class="btn-sub" style="padding:3px 7px; font-size:0.7rem;" onclick="editBankItem(${index})">✏️ EDIT</button>
+              <button class="btn-sub" style="padding:3px 7px; font-size:0.7rem; color:#ef4444;" onclick="deleteBankItem(${index})">🗑️</button>
             </div>
-          </div>
-          <div style="display:flex; gap:5px;">
-            <button class="btn-sub" style="padding:3px 7px; font-size:0.7rem;" onclick="playDirectLevel(${index})">▶ PLAY</button>
-            <button class="btn-sub" style="padding:3px 7px; font-size:0.7rem;" onclick="editBankItem(${index})">✏️ EDIT</button>
-            <button class="btn-sub" style="padding:3px 7px; font-size:0.7rem; color:#ef4444;" onclick="deleteBankItem(${index})">🗑️</button>
-          </div>
-        `;
+          `;
+        } else {
+          const parsed = parseClozeData(item.rawSentence);
+          card.innerHTML = `
+            <div class="bank-item-info">
+              <div>
+                <span class="mission-type-tag" style="display:inline-block;">${item.category || 'CLOZE'}</span>
+                <span style="font-size:0.8rem; color:var(--text-main); margin-left:5px;">${item.hint}</span>
+              </div>
+              <div class="bank-item-sentence">${item.rawSentence}</div>
+              <div class="bank-item-meta">
+                Words: ${parsed.correctWords.length} • Exit: ${item.exitSide || 'Auto'} • Time: ${item.timeLimit}s
+              </div>
+            </div>
+            <div style="display:flex; gap:5px;">
+              <button class="btn-sub" style="padding:3px 7px; font-size:0.7rem;" onclick="playDirectLevel(${index})">▶ PLAY</button>
+              <button class="btn-sub" style="padding:3px 7px; font-size:0.7rem;" onclick="editBankItem(${index})">✏️ EDIT</button>
+              <button class="btn-sub" style="padding:3px 7px; font-size:0.7rem; color:#ef4444;" onclick="deleteBankItem(${index})">🗑️</button>
+            </div>
+          `;
+        }
+
         container.appendChild(card);
       });
     }
 
+    // Classic live preview
     const sentenceInput = document.getElementById('form-sentence');
     const previewBox = document.getElementById('form-word-preview');
-
     sentenceInput.addEventListener('input', () => {
       const parsed = parseClozeData(sentenceInput.value);
       previewBox.innerHTML = '';
@@ -1927,8 +2776,26 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
       });
     });
 
+    // Baby Mode live preview
+    const babyTokensInput = document.getElementById('baby-form-tokens');
+    const babyPreviewBox = document.getElementById('baby-form-preview');
+    function parseBabyTokensInput(str) {
+      return str.split(/[,，]/).map(s => s.trim()).filter(Boolean);
+    }
+    babyTokensInput.addEventListener('input', () => {
+      const tokens = parseBabyTokensInput(babyTokensInput.value);
+      babyPreviewBox.innerHTML = '';
+      tokens.forEach(t => {
+        const tag = document.createElement('span');
+        tag.className = 'word-tag baby-tag';
+        tag.textContent = t;
+        babyPreviewBox.appendChild(tag);
+      });
+    });
+
     function resetBankForm() {
       document.getElementById('edit-form-id').value = '';
+      // Classic fields
       document.getElementById('form-category').value = '';
       document.getElementById('form-timelimit').value = '60';
       document.getElementById('form-hint').value = '';
@@ -1936,25 +2803,60 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
       document.getElementById('form-distractors').value = '';
       document.getElementById('form-exit-side').value = 'auto';
       previewBox.innerHTML = '';
+      // Baby fields
+      document.getElementById('baby-form-category').value = '';
+      document.getElementById('baby-form-layout').value = 'auto';
+      document.getElementById('baby-form-hint').value = '';
+      document.getElementById('baby-form-tokens').value = '';
+      document.getElementById('baby-form-display').value = '';
+      document.getElementById('baby-form-speech').value = '';
+      babyPreviewBox.innerHTML = '';
+    }
+
+    function matchPresetKey(guidePath, exitSide) {
+      const pathStr = JSON.stringify(guidePath);
+      for (const [key, val] of Object.entries(BABY_PATH_PRESETS)) {
+        if (val.exitSide === exitSide && JSON.stringify(val.guidePath) === pathStr) {
+          return key;
+        }
+      }
+      return 'auto';
     }
 
     window.editBankItem = function(index) {
-      const item = questionBank[index];
       document.getElementById('edit-form-id').value = index;
-      document.getElementById('form-category').value = item.category || '';
-      document.getElementById('form-timelimit').value = item.timeLimit || 60;
-      document.getElementById('form-hint').value = item.hint || '';
-      document.getElementById('form-sentence').value = item.rawSentence || '';
-      document.getElementById('form-distractors').value = (item.distractors || []).join(", ");
-      document.getElementById('form-exit-side').value = item.exitSide || 'auto';
 
-      sentenceInput.dispatchEvent(new Event('input'));
+      if (activeBuilderBank === 'baby') {
+        const item = babyQuestionBank[index];
+        document.getElementById('baby-form-category').value = item.category || '';
+        document.getElementById('baby-form-hint').value = item.hint || '';
+        document.getElementById('baby-form-tokens').value = (item.tokens || []).join(", ");
+        document.getElementById('baby-form-display').value = item.promptDisplay || '';
+        document.getElementById('baby-form-speech').value = item.speechPrompt || '';
+        document.getElementById('baby-form-layout').value = matchPresetKey(item.guidePath, item.exitSide);
+        babyTokensInput.dispatchEvent(new Event('input'));
+      } else {
+        const item = questionBank[index];
+        document.getElementById('form-category').value = item.category || '';
+        document.getElementById('form-timelimit').value = item.timeLimit || 60;
+        document.getElementById('form-hint').value = item.hint || '';
+        document.getElementById('form-sentence').value = item.rawSentence || '';
+        document.getElementById('form-distractors').value = (item.distractors || []).join(", ");
+        document.getElementById('form-exit-side').value = item.exitSide || 'auto';
+        sentenceInput.dispatchEvent(new Event('input'));
+      }
+
       switchBankTab('edit');
     };
 
     window.deleteBankItem = function(index) {
+      const arr = getActiveBuilderArray();
+      if (arr.length <= 1) {
+        alert("Please keep at least 1 level in this bank!");
+        return;
+      }
       if (confirm(`Delete level #${index + 1}?`)) {
-        questionBank.splice(index, 1);
+        arr.splice(index, 1);
         saveBankToStorage();
         renderBankListCards();
       }
@@ -1964,60 +2866,140 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
       modalBank.classList.add('hidden');
       document.getElementById('start-screen').classList.add('hidden');
       document.getElementById('game-screen').classList.remove('hidden');
+      if (activeBuilderBank === 'baby') {
+        isBabyMode = true;
+        isTimerEnabled = false;
+      } else {
+        isBabyMode = false;
+      }
       startLevel(index);
     };
 
+    function resolveAutoBabyPreset(tokenCount) {
+      if (tokenCount === 3) return BABY_PATH_PRESETS.p3_right;
+      if (tokenCount === 4) return BABY_PATH_PRESETS.p4_top_right;
+      return BABY_PATH_PRESETS.p5_loop_up;
+    }
+
     document.getElementById('btn-save-form-item').addEventListener('click', () => {
-      const hint = document.getElementById('form-hint').value.trim();
-      const rawSentence = document.getElementById('form-sentence').value.trim();
-      const parsed = parseClozeData(rawSentence);
-
-      if (!hint) { alert("Please provide a prompt/context hint!"); return; }
-      if (parsed.correctWords.length < 5) {
-        alert("Due to 5x5 topology, please provide at least 5 words!");
-        return;
-      }
-
-      const category = document.getElementById('form-category').value.trim() || 'CLOZE';
-      const timeLimit = parseInt(document.getElementById('form-timelimit').value, 10) || 60;
-      const distractorStr = document.getElementById('form-distractors').value.trim();
-      const distractors = distractorStr ? distractorStr.split(/[,，\s]+/).filter(Boolean) : [];
-      const exitSide = document.getElementById('form-exit-side').value;
-
       const editIdx = document.getElementById('edit-form-id').value;
-      const newQuestion = {
-        id: editIdx !== '' ? questionBank[editIdx].id : 'q_' + Date.now(),
-        category,
-        hint,
-        rawSentence,
-        distractors,
-        exitSide,
-        timeLimit
-      };
 
-      if (editIdx !== '') {
-        questionBank[editIdx] = newQuestion;
+      if (activeBuilderBank === 'baby') {
+        const category = document.getElementById('baby-form-category').value.trim() || 'FUN';
+        const hint = document.getElementById('baby-form-hint').value.trim();
+        const tokens = parseBabyTokensInput(document.getElementById('baby-form-tokens').value);
+        const layoutKey = document.getElementById('baby-form-layout').value;
+
+        if (!hint) { alert("Please enter a kid-friendly hint!"); return; }
+        if (tokens.length < 3 || tokens.length > 5) {
+          alert("Baby Mode (3×3) requires 3 to 5 pipe tokens (separated by commas)!");
+          return;
+        }
+
+        let preset;
+        if (layoutKey === 'auto') {
+          preset = resolveAutoBabyPreset(tokens.length);
+        } else {
+          preset = BABY_PATH_PRESETS[layoutKey];
+          if (preset.len !== tokens.length) {
+            alert(`The selected path needs ${preset.len} pipes, but you entered ${tokens.length} tokens. Select "Auto-Match" or match the count!`);
+            return;
+          }
+        }
+
+        const promptDisplay = document.getElementById('baby-form-display').value.trim() || tokens.join(" ➔ ");
+        const speechPrompt = document.getElementById('baby-form-speech').value.trim() || tokens.join(", ");
+
+        const newBabyQuestion = {
+          id: editIdx !== '' ? babyQuestionBank[editIdx].id : 'b_' + Date.now(),
+          category,
+          hint,
+          promptDisplay,
+          speechPrompt,
+          tokens,
+          guidePath: clonePresets(preset.guidePath),
+          exitSide: preset.exitSide,
+          exitIndex: preset.exitIndex
+        };
+
+        if (editIdx !== '') babyQuestionBank[editIdx] = newBabyQuestion;
+        else babyQuestionBank.push(newBabyQuestion);
+
+        saveBankToStorage('baby');
+        alert("Baby Mode level saved!");
+        switchBankTab('list');
       } else {
-        questionBank.push(newQuestion);
-      }
+        const hint = document.getElementById('form-hint').value.trim();
+        const rawSentence = document.getElementById('form-sentence').value.trim();
+        const parsed = parseClozeData(rawSentence);
 
-      saveBankToStorage();
-      alert("Question successfully saved!");
-      switchBankTab('list');
+        if (!hint) { alert("Please provide a prompt/context hint!"); return; }
+        if (parsed.correctWords.length < 5) {
+          alert("Due to 5×5 topology, please provide at least 5 words!");
+          return;
+        }
+
+        const category = document.getElementById('form-category').value.trim() || 'CLOZE';
+        const timeLimit = parseInt(document.getElementById('form-timelimit').value, 10) || 60;
+        const distractorStr = document.getElementById('form-distractors').value.trim();
+        const distractors = distractorStr ? distractorStr.split(/[,，\s]+/).filter(Boolean) : [];
+        const exitSide = document.getElementById('form-exit-side').value;
+
+        const newQuestion = {
+          id: editIdx !== '' ? questionBank[editIdx].id : 'q_' + Date.now(),
+          category,
+          hint,
+          rawSentence,
+          distractors,
+          exitSide,
+          timeLimit
+        };
+
+        if (editIdx !== '') questionBank[editIdx] = newQuestion;
+        else questionBank.push(newQuestion);
+
+        saveBankToStorage('classic');
+        alert("Classic level saved!");
+        switchBankTab('list');
+      }
     });
 
     document.getElementById('btn-cancel-edit').addEventListener('click', () => switchBankTab('list'));
 
-    function saveBankToStorage() {
-      localStorage.setItem("plumber_bank_cloze_v7", JSON.stringify(questionBank));
-    }
-
     document.getElementById('btn-save-json').addEventListener('click', () => {
       try {
         const parsed = JSON.parse(document.getElementById('bank-json-input').value);
-        if (!Array.isArray(parsed) || parsed.length === 0) throw new Error("JSON must be a valid array!");
-        questionBank = parsed;
-        saveBankToStorage();
+        if (!Array.isArray(parsed) || parsed.length === 0) throw new Error("JSON must be a non-empty array!");
+
+        if (activeBuilderBank === 'baby') {
+          // Validate & normalize Baby Mode JSON entries
+          const normalized = parsed.map((item, idx) => {
+            if (!Array.isArray(item.tokens) || item.tokens.length < 3 || item.tokens.length > 5) {
+              throw new Error(`Baby Mode item #${idx + 1} must have 3 to 5 tokens.`);
+            }
+            const fallbackPreset = resolveAutoBabyPreset(item.tokens.length);
+            const guidePath = (Array.isArray(item.guidePath) && item.guidePath.length === item.tokens.length)
+              ? item.guidePath
+              : fallbackPreset.guidePath;
+            return {
+              id: item.id || ('b_' + Date.now() + '_' + idx),
+              category: item.category || 'FUN',
+              hint: item.hint || 'Connect the pipes to Duckie!',
+              promptDisplay: item.promptDisplay || item.tokens.join(" ➔ "),
+              speechPrompt: item.speechPrompt || item.tokens.join(", "),
+              tokens: item.tokens,
+              guidePath,
+              exitSide: item.exitSide || fallbackPreset.exitSide,
+              exitIndex: (item.exitIndex !== undefined) ? item.exitIndex : fallbackPreset.exitIndex
+            };
+          });
+          babyQuestionBank = normalized;
+          saveBankToStorage('baby');
+        } else {
+          questionBank = parsed;
+          saveBankToStorage('classic');
+        }
+
         alert("JSON imported successfully!");
         switchBankTab('list');
       } catch (err) {
@@ -2026,52 +3008,78 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
     });
 
     document.getElementById('btn-reset-default-bank').addEventListener('click', () => {
-      if (confirm("Restore original level presets?")) {
-        questionBank = DEFAULT_QUESTION_BANK;
-        localStorage.removeItem("plumber_bank_cloze_v7");
-        document.getElementById('bank-json-input').value = JSON.stringify(questionBank, null, 2);
+      const modeName = activeBuilderBank === 'baby' ? 'Baby Mode (3×3)' : 'Classic (5×5)';
+      if (confirm(`Restore original ${modeName} presets?`)) {
+        if (activeBuilderBank === 'baby') {
+          babyQuestionBank = clonePresets(DEFAULT_BABY_QUESTION_BANK);
+          localStorage.removeItem(BABY_STORAGE_KEY);
+          document.getElementById('bank-json-input').value = JSON.stringify(babyQuestionBank, null, 2);
+        } else {
+          questionBank = clonePresets(DEFAULT_QUESTION_BANK);
+          localStorage.removeItem(CLASSIC_STORAGE_KEY);
+          document.getElementById('bank-json-input').value = JSON.stringify(questionBank, null, 2);
+        }
         renderBankListCards();
-        alert("Default levels restored!");
+        alert(`Default ${modeName} levels restored!`);
       }
     });
 
     /* =========================================================================
-       10. 結算與畫面導覽
+       10. RESULT MODAL & NAVIGATION
        ========================================================================= */
     function showResultModal(isWin, desc) {
       const modal = document.getElementById('modal-result');
       const title = document.getElementById('result-title');
       const descEl = document.getElementById('result-desc');
       const btnNext = document.getElementById('btn-next-level');
+      const btnRetry = document.getElementById('btn-retry-level');
 
       modal.classList.remove('hidden');
       if (isWin) {
-        title.textContent = "🎉 WATERWAY CLEARED!";
-        title.style.color = "#38bdf8";
+        title.textContent = isBabyMode ? "🎉 YAY! QUACK QUACK! 🦆" : "🎉 WATERWAY CLEARED!";
+        title.style.color = isBabyMode ? "#ec4899" : "#38bdf8";
         btnNext.style.display = "inline-block";
+        btnNext.textContent = isBabyMode ? "NEXT LEVEL ➔" : "NEXT LEVEL";
+        btnRetry.textContent = isBabyMode ? "PLAY AGAIN" : "RETRY";
       } else {
-        title.textContent = "⚠️ PIPE BURST / LEAK DETECTED";
-        title.style.color = "#ef4444";
+        title.textContent = isBabyMode ? "💦 OOPS! WATER SPLASHED!" : "⚠️ PIPE BURST / LEAK DETECTED";
+        title.style.color = isBabyMode ? "#0284c7" : "#ef4444";
         btnNext.style.display = "none";
+        btnRetry.textContent = isBabyMode ? "🔄 TRY AGAIN!" : "RETRY";
       }
       descEl.textContent = desc;
     }
 
     document.getElementById('btn-play').addEventListener('click', () => {
+      isBabyMode = false;
+      isTimerEnabled = true;
+      timerToggleBtn.textContent = "⏱️ TIMER: ON";
+      timerToggleBtn.classList.remove('zen-mode');
       document.getElementById('start-screen').classList.add('hidden');
       document.getElementById('game-screen').classList.remove('hidden');
       startLevel(0);
     });
 
-    document.getElementById('btn-back-menu').addEventListener('click', () => {
-      clearInterval(timerInterval);
-      document.getElementById('game-screen').classList.add('hidden');
-      document.getElementById('start-screen').classList.remove('hidden');
+    document.getElementById('btn-play-baby').addEventListener('click', () => {
+      isBabyMode = true;
+      isTimerEnabled = false;
+      document.getElementById('start-screen').classList.add('hidden');
+      document.getElementById('game-screen').classList.remove('hidden');
+      startLevel(0);
     });
 
     document.getElementById('btn-retry-level').addEventListener('click', () => {
       document.getElementById('modal-result').classList.add('hidden');
-      startLevel(currentLevelIdx);
+      if (isBabyMode) {
+        for (let r = 0; r < GRID_SIZE; r++) {
+          for (let c = 0; c < GRID_SIZE; c++) {
+            if (gridData[r][c]) gridData[r][c].isWaterFilled = false;
+          }
+        }
+        renderGrid();
+      } else {
+        startLevel(currentLevelIdx);
+      }
     });
 
     document.getElementById('btn-next-level').addEventListener('click', () => {
@@ -2087,6 +3095,7 @@ Time limit: At the bottom of the screen, a pipe connects to the faucet in the up
     });
 
     document.getElementById('btn-open-bank').addEventListener('click', () => {
+      switchBuilderBankMode(activeBuilderBank);
       switchBankTab('list');
       modalBank.classList.remove('hidden');
     });
